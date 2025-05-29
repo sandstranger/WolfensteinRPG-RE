@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
-
 project(WolfensteinRPG)
+
+if (NOT ANDROID)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
+else()
+	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+endif()
 
 if(MSVC)
 	add_definitions("/D_CRT_SECURE_NO_WARNINGS")
