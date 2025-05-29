@@ -22,6 +22,9 @@
 #include "Enums.h"
 #include "Sound.h"
 #include "Menus.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 Hud::Hud() {
 	memset(this, 0, sizeof(Hud));

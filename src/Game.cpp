@@ -25,6 +25,9 @@
 #include "Input.h"
 #include "GLES.h"
 #include "Render.h"
+#if ANDROID
+#include <algorithm>
+#endif
 
 constexpr int Game::dropDirs[];
 

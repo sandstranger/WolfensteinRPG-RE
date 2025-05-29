@@ -17,6 +17,9 @@
 #include "MenuSystem.h"
 #include "Menus.h"
 #include "Image.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 CardGames::CardGames() {
     memset(this, 0, sizeof(CardGames));

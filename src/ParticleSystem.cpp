@@ -11,6 +11,9 @@
 #include "Entity.h"
 #include "EntityDef.h"
 #include "Enums.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 constexpr uint32_t ParticleSystem::levelColors[];
 constexpr int32_t ParticleSystem::rotationSequence[];

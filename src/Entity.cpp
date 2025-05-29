@@ -20,6 +20,9 @@
 #include "MenuStrings.h"
 #include "Enums.h"
 #include "Sound.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 Entity::Entity() {
     memset(this, 0, sizeof(Entity));

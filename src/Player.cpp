@@ -17,6 +17,9 @@
 #include "Resource.h"
 #include "MenuSystem.h"
 #include "Menus.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 constexpr int Player::WeaponSounds[18];
 
@@ -457,7 +460,7 @@ int Player::calcScore() {
         for (int i5 = 0; i5 < 2; i5++) {
             int i6 = this->medals[i5];
             for (int i7 = 0; i7 < 32; i7++) {
-                // if ((i6 & 1 << i7) == 1)  // <- [Original Code] A bug? It only verifies one medal per field. / ¿Un error? Solo verifica una medalla por campo.
+                // if ((i6 & 1 << i7) == 1)  // <- [Original Code] A bug? It only verifies one medal per field. / ï¿½Un error? Solo verifica una medalla por campo.
                 if ((i6 & 1 << i7) != 0x0) { // <- [GEC] Allows you to verify all the medals collected. / Permite verificar todas las medallas colectadas.
                     n += 100;
                 }

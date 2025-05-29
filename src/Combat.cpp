@@ -21,6 +21,9 @@
 #include "DrivingGame.h"
 #include "Sound.h"
 #include "MenuStrings.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 Combat::Combat() {
 	memset(this, 0, sizeof(Combat));

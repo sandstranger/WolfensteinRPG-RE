@@ -13,7 +13,9 @@
 #include "Game.h"
 #include "Enums.h"
 #include "Sound.h"
-
+#if ANDROID
+#include "algorithm"
+#endif
 //LISTO VERIFICADO
 
 CombatEntity::CombatEntity() {

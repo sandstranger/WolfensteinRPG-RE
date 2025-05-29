@@ -29,8 +29,10 @@
 #include "Input.h"
 #include "CardGames.h"
 #include "DrivingGame.h"
-
 #include "Utils.h"
+#if ANDROID
+#include <algorithm>
+#endif
 
 constexpr int Canvas::viewStepValues[];
 constexpr int Canvas::CKPOINTS[20];
@@ -6247,7 +6249,7 @@ void Canvas::drawMovieEffects(Graphics* graphics, int time, int x, int y)
 	for (int i = 0, currentTime = time; i < effectCount; ++i, currentTime += effectInterval) {
 		int* data = &effectData[i * 6];
 
-		// Validación de la cámara activa
+		// Validaciï¿½n de la cï¿½mara activa
 		if (data[3] <= app->game->activeCameraKey && data[4] == -1) {
 			data[4] = time;
 			data[5] += time;

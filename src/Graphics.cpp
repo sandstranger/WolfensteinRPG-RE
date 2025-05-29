@@ -9,6 +9,9 @@
 #include "Canvas.h"
 #include "Text.h"
 #include "SDLGL.h"
+#if ANDROID
+#include <algorithm>
+#endif
 
 #define COLOR_BYTE_TO_FLOAT(x) (float)((float)(x) * (1.f / 256)) // (1.f / 256) -> 0.0039062f
 

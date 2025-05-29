@@ -8,6 +8,9 @@
 #include "Resource.h"
 #include "MenuStrings.h"
 #include "Entity.h"
+#if ANDROID
+#include "algorithm"
+#endif
 
 // --------------------
 // Localization Class
