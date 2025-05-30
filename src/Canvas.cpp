@@ -4246,10 +4246,14 @@ void Canvas::backToMain(bool b) {
 	app->render->unloadMap();
 	app->render->endFade();
 
-	app->menuSystem->imgMainBG->~Image();
+    if (app->menuSystem->imgMainBG!= nullptr) {
+        app->menuSystem->imgMainBG->~Image();
+    }
 	app->menuSystem->imgMainBG = app->loadImage("logo.bmp", true);
 
-	app->menuSystem->imgLogo->~Image();
+    if (app->menuSystem->imgLogo!= nullptr) {
+        app->menuSystem->imgLogo->~Image();
+    }
 	app->menuSystem->imgLogo = app->loadImage("logo2.bmp", true);
 
 	if (b) {
