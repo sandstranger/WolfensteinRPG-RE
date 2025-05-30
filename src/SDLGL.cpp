@@ -57,18 +57,20 @@ SDLGL::~SDLGL() {
 bool SDLGL::Initialize() {
 	Uint32 flags;
 
-	if (!this->initialized) {
+ 	if (!this->initialized) {
 		
 		SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 			printf("Could not initialize SDL: %s", SDL_GetError());
 		}
 
-		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN /* | SDL_WINDOW_RESIZABLE*/;
+        flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN /* | SDL_WINDOW_RESIZABLE*/;
 		// Set the highdpi flags - this makes a big difference on Macs with
 		// retina displays, especially when using small window sizes.
 		flags |= SDL_WINDOW_ALLOW_HIGHDPI;
-
+#ifdef ANDROID
+        flags |= SDL_WINDOW_RESIZABLE;
+#endif
 		this->oldResolutionIndex = -1;
 		this->resolutionIndex = 0;
 		this->winVidWidth = sdlResVideoModes[this->resolutionIndex].width;//Applet::IOS_WIDTH*2;
@@ -82,7 +84,19 @@ bool SDLGL::Initialize() {
 		this->gpSdlWindowIcon = SDL_CreateRGBSurfaceWithFormatFrom((void*)Applet::gIcon_64_raw_rgb888, 64, 64, 24, 64 * 3, SDL_PIXELFORMAT_RGB24);
 #endif
 
-		this->window = SDL_CreateWindow("Wolfenstein RPG By [GEC] Version 0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, winVidWidth, winVidHeight, flags);
+#ifdef ANDROID
+        SDL_DisplayMode displayMode;
+        SDL_GetDesktopDisplayMode(0, &displayMode);
+        this->window = SDL_CreateWindow("Wolfenstein RPG By [GEC] Version 0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, displayMode.w, displayMode.h, flags);
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        SDL_SetWindowPosition(this->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_SetWindowBordered(this->window, SDL_FALSE);
+        int winVidWidth, winVidHeight;
+        SDL_GetWindowSize(this->window, &winVidWidth, &winVidHeight);
+        this->updateWinVid(winVidWidth, winVidHeight);
+#else
+        this->window = SDL_CreateWindow("Wolfenstein RPG By [GEC] Version 0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, winVidWidth, winVidHeight, flags);
+#endif
 		if (!this->window) {
 			printf("Could not set %dx%d video mode: %s", winVidWidth, winVidHeight, SDL_GetError());
 		}
@@ -204,30 +218,31 @@ void SDLGL::updateVideo() {
 		SDL_GL_SetSwapInterval(this->vSync ? 1 : 0);
 		this->oldVSync = this->vSync;
 	}
+#if !ANDROID
+    if (this->windowMode != this->oldWindowMode) {
+        SDL_SetWindowFullscreen(this->window, 0);
+        SDL_SetWindowBordered(this->window, SDL_TRUE);
 
-	if (this->windowMode != this->oldWindowMode) {
-		SDL_SetWindowFullscreen(this->window, 0);
-		SDL_SetWindowBordered(this->window, SDL_TRUE);
+        if (this->windowMode == 1) {
+            SDL_SetWindowBordered(this->window, SDL_FALSE);
+        }
+        else if (this->windowMode == 2) {
+            SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN);
+        }
+        this->oldWindowMode = this->windowMode;
+    }
 
-		if (this->windowMode == 1) {
-			SDL_SetWindowBordered(this->window, SDL_FALSE);
-		}
-		else if (this->windowMode == 2) {
-			SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN);
-		}
-		this->oldWindowMode = this->windowMode;
-	}
+    if (this->resolutionIndex != this->oldResolutionIndex) {
+        SDL_SetWindowSize(this->window, sdlResVideoModes[this->resolutionIndex].width, sdlResVideoModes[this->resolutionIndex].height);
+        SDL_SetWindowPosition(this->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        this->updateWinVid(sdlResVideoModes[this->resolutionIndex].width, sdlResVideoModes[this->resolutionIndex].height);
+        this->oldResolutionIndex = this->resolutionIndex;
+    }
 
-	if (this->resolutionIndex != this->oldResolutionIndex) {
-		SDL_SetWindowSize(this->window, sdlResVideoModes[this->resolutionIndex].width, sdlResVideoModes[this->resolutionIndex].height);
-		SDL_SetWindowPosition(this->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-		this->updateWinVid(sdlResVideoModes[this->resolutionIndex].width, sdlResVideoModes[this->resolutionIndex].height);
-		this->oldResolutionIndex = this->resolutionIndex;
-	}
-
-	int winVidWidth, winVidHeight;
-	SDL_GetWindowSize(this->window, &winVidWidth, &winVidHeight);
-	this->updateWinVid(winVidWidth, winVidHeight);
+    int winVidWidth, winVidHeight;
+    SDL_GetWindowSize(this->window, &winVidWidth, &winVidHeight);
+    this->updateWinVid(winVidWidth, winVidHeight);
+#endif
 }
 
 void SDLGL::restore() {
