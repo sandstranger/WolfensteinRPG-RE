@@ -21,10 +21,21 @@
 #include "Utils.h"
 #include "TinyGL.h"
 #include "Input.h"
+#ifdef ANDROID
+#include <SDL_main.h>
+#endif
 
 void drawView(SDLGL* sdlGL);
 
+#ifdef ANDROID
+int SDL_main(int argc, char **argv) {
+#else
 int main(int argc, char* args[]) {
+#endif
+
+#ifdef ANDROID
+    chdir(getenv("ANDROID_GAME_PATH"));
+#endif
     int		UpTime = 0;
 
     if (UpTime == 0) {
@@ -32,8 +43,11 @@ int main(int argc, char* args[]) {
     }
     
     ZipFile zipFile;
+#ifdef ANDROID
+    zipFile.openZipFile(getenv("WOLF_IPA_FILE_NAME"));
+#else
     zipFile.openZipFile("Wolfenstein RPG.ipa");
-
+#endif
 	SDLGL sdlGL;
 	sdlGL.Initialize();
 
