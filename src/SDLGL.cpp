@@ -43,7 +43,7 @@ SDLGL::~SDLGL() {
 				this->window = nullptr;
 			}
 
-#ifdef __linux__
+#if __linux__ && !ANDROID
 			if (this->gpSdlWindowIcon) {
 				SDL_FreeSurface(this->gpSdlWindowIcon);
 				this->gpSdlWindowIcon = nullptr;
@@ -78,7 +78,7 @@ bool SDLGL::Initialize() {
 		//this->winVidHeight = 900;
 
 		// Linux: create the icon for the window
-#ifdef __linux__
+#if __linux__ && !ANDROID
 		this->gpSdlWindowIcon = SDL_CreateRGBSurfaceWithFormatFrom((void*)Applet::gIcon_64_raw_rgb888, 64, 64, 24, 64 * 3, SDL_PIXELFORMAT_RGB24);
 #endif
 
@@ -94,13 +94,19 @@ bool SDLGL::Initialize() {
 		this->oldVSync = false;
 		this->vSync = true;
 
+#ifdef ANDROID
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_NO_ERROR, 1);
+#endif
 		//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 		//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 		//SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");//sdlVideo.vSync ? "1" : "0");
 		this->updateVideo();
 
 		// Linux: set the icon for the window
-#ifdef __linux__
+#if __linux__ && !ANDROID
 		if (this->gpSdlWindowIcon) {
 			SDL_SetWindowIcon(this->window, this->gpSdlWindowIcon);
 		}

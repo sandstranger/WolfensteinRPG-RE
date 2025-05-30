@@ -17,7 +17,7 @@ class SDLGL
 private:
 	bool initialized;
 	SDL_GLContext glcontext;
-#ifdef __linux__
+#if __linux__ && !ANDROID
 	// Linux only: an icon to use for the window (SDL)
 	SDL_Surface* gpSdlWindowIcon;
 #endif
