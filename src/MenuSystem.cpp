@@ -4588,6 +4588,20 @@ void MenuSystem::updateTouchButtonState() {
 	}
 }
 
+bool MenuSystem::isAnyButtonHighlighted(){
+    for (int i = 0; i < 16; i++) {
+        if (this->m_menuButtons->GetButton(i)->highlighted){
+            return true;
+        }
+    }
+    for (int j = 0; j < 9; j++) {
+        if (this->m_infoButtons->GetButton(j)->highlighted){
+            return true;
+        }
+    }
+    return false;
+}
+
 void MenuSystem::handleUserTouch(int x, int y, bool b) {
 	Applet* app = CAppContainer::getInstance()->app;
 	bool v4; // r6
@@ -4635,12 +4649,20 @@ void MenuSystem::handleUserTouch(int x, int y, bool b) {
 		if (btnScroll->field_0x14_)
 		{
 			btnScroll->field_0x14_ = 0;
+            if (isAnyButtonHighlighted())
+            {
+                goto LABEL_17;
+            }
 			return;
 		}
 		if (btnScroll->field_0x38_)
 		{
 			btnScroll->field_0x38_ = 0;
-			return;
+            if (isAnyButtonHighlighted())
+            {
+                goto LABEL_17;
+            }
+            return;
 		}
 		goto LABEL_17;
 	}

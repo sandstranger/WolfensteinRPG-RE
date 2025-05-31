@@ -17,7 +17,7 @@ class MenuSystem;
 class MenuSystem
 {
 private:
-
+    bool isAnyButtonHighlighted();
 public:
     static constexpr int NO = 0;
     static constexpr int YES = 1;
