@@ -25,8 +25,8 @@ public:
 
 	short* GetBackBuffer();
 	void DoLoop(int time);
-	void suspendOpenAL();
-	void resumeOpenAL();
+	void suspendOpenAL() const;
+	void resumeOpenAL() const;
 	void userPressed(float pressX, float pressY);
 	void userMoved(float pressX, float pressY);
 	void userReleased(float pressX, float pressY);

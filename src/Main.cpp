@@ -23,6 +23,7 @@
 #include "Input.h"
 #ifdef ANDROID
 #include <SDL_main.h>
+#include <jni.h>
 #endif
 
 void drawView(SDLGL* sdlGL);
@@ -121,3 +122,16 @@ void drawView(SDLGL *sdlGL) {
     SDL_GL_SwapWindow(sdlGL->window);  // Swap the window/pBmp to display the result.
     
 }
+
+#ifdef ANDROID
+extern "C" {
+JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_resumeSound(JNIEnv *env, jobject thisObject) {
+    CAppContainer::getInstance()->resumeOpenAL();
+}
+
+JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_pauseSound(JNIEnv *env, jobject thisObject) {
+    CAppContainer::getInstance()->suspendOpenAL();
+}
+}
+#endif
+
