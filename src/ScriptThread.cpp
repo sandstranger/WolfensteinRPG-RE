@@ -221,9 +221,7 @@ void ScriptThread::setupCamera(int n) {
 }
 
 uint32_t ScriptThread::run() {
-    if (!this->app) {
-        this->app = CAppContainer::getInstance()->app;
-    }
+    this->app = CAppContainer::getInstance()->app;
     this->app->game->updateScriptVars();
     if (this->stackPtr == 0) {
         return 1;
