@@ -1808,6 +1808,9 @@ int ScriptThread::getIndex() {
 }
 
 int ScriptThread::pop() {
+    if (this->stackPtr <= 0) {
+        return 0;
+    }
     return this->scriptStack[--this->stackPtr];
 }
 
