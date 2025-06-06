@@ -20,6 +20,9 @@
 #include "Sound.h"
 #include "Menus.h"
 #include "CardGames.h"
+#ifdef ANDROID
+#include <android/log.h>
+#endif
 
 ScriptThread::ScriptThread() {
 }
@@ -239,6 +242,268 @@ uint32_t ScriptThread::run() {
 
         //printf("mapByteCode[%d] [%d]\n", this->IP, mapByteCode[this->IP]);
         switch (mapByteCode[this->IP]) {
+#ifdef ANDROID
+            case Enums::EV_EVAL: {
+                // Сколько «элементов» нам нужно обработать в этом EV_EVAL
+                short n3 = (short)this->getByteArg();
+                b = false;
+
+                // Цикл по n3 элементам
+                while (true) {
+                    if (--n3 < 0) {
+                        break;
+                    }
+                    short uByteArg = this->getByteArg();
+
+                    // --- 1) Константа ---
+                    if ((uByteArg & Enums::EVAL_CONSTFLAG) != 0x0) {
+                        int low8  = this->getByteArg();
+                        int args2 = ((((uByteArg & Enums::EVAL_CONSTMASK) << 8) | low8) << 18) >> 18;
+
+                        // Проверяем возможность записать в стек
+                        if (this->stackPtr < MAX_STACK_SIZE) {
+                            this->push(args2);
+                        } else {
+                            // Превышен размер стека — пропускаем push, чтобы не уйти за границы
+                            __android_log_print(
+                                    ANDROID_LOG_ERROR, "NDK",
+                                    "EV_EVAL: пропущен push(CONST=%d) — stack overflow, stackPtr=%d",
+                                    args2, this->stackPtr
+                            );
+                        }
+                    }
+                        // --- 2) Переменная ---
+                    else if ((uByteArg & Enums::EVAL_VARFLAG) != 0x0) {
+                        int varIndex = (uByteArg & Enums::EVAL_VARMASK);
+                        int varVal   = this->app->game->scriptStateVars[varIndex];
+
+                        if (this->stackPtr < MAX_STACK_SIZE) {
+                            this->push(varVal);
+                        } else {
+                            __android_log_print(
+                                    ANDROID_LOG_ERROR, "NDK",
+                                    "EV_EVAL: пропущен push(VAR[%d]=%d) — stack overflow, stackPtr=%d",
+                                    varIndex, varVal, this->stackPtr
+                            );
+                        }
+                    }
+                        // --- 3) Логические/сравнительные операции ---
+                    else {
+                        switch (uByteArg) {
+                            case Enums::EVAL_AND: {
+                                // Для AND нужно минимум 2 значения в стеке
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = ((a == 1) && (b == 1)) ? 1 : 0;
+
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(AND result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    // Недостаточно элементов → очищаем всё и кладём false (0)
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для AND, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_OR: {
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = ((a == 1) || (b == 1)) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(OR result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для OR, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_LTE: {
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = (b <= a) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(LTE result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для LTE, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_LT: {
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = (b < a) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(LT result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для LT, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_EQ: {
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = (a == b) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(EQ result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для EQ, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_NEQ: {
+                                if (this->stackPtr >= 2) {
+                                    int a = this->pop();
+                                    int b = this->pop();
+                                    int result = (a != b) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(NEQ result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для NEQ, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    while (this->stackPtr > 0) this->pop();
+                                    if (this->stackPtr < MAX_STACK_SIZE) this->push(0);
+                                }
+                                break;
+                            }
+                            case Enums::EVAL_NOT: {
+                                if (this->stackPtr >= 1) {
+                                    int a = this->pop();
+                                    int result = (a == 0) ? 1 : 0;
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(result);
+                                    } else {
+                                        __android_log_print(
+                                                ANDROID_LOG_ERROR, "NDK",
+                                                "EV_EVAL: пропущен push(NOT result=%d) — stack overflow, stackPtr=%d",
+                                                result, this->stackPtr
+                                        );
+                                    }
+                                } else {
+                                    __android_log_print(
+                                            ANDROID_LOG_ERROR, "NDK",
+                                            "EV_EVAL: недостаточно элементов для NOT, stackPtr=%d",
+                                            this->stackPtr
+                                    );
+                                    // Если нет элементов, просто считаем NOT от «пустого» как true (1)
+                                    if (this->stackPtr < MAX_STACK_SIZE) {
+                                        this->push(1);
+                                    }
+                                }
+                                break;
+                            }
+                            default: {
+                                // Нераспознанный uByteArg — пропускаем
+                                __android_log_print(
+                                        ANDROID_LOG_WARN, "NDK",
+                                        "EV_EVAL: неизвестная операция uByteArg=%d",
+                                        uByteArg
+                                );
+                                break;
+                            }
+                        } // конец switch(uByteArg)
+                    } // конец else (не CONST и не VAR)
+                } // конец while (n3--)
+
+                // После обработки всех n3 элементов получаем условие
+                short uByteArg2 = this->getUByteArg();
+
+                // Берём значение из стека для проверки
+                int condValue;
+                if (this->stackPtr > 0) {
+                    condValue = this->pop();
+                } else {
+                    __android_log_print(
+                            ANDROID_LOG_ERROR, "NDK",
+                            "EV_EVAL: попытка pop() условия, но стек пуст (stackPtr=0). cond=0"
+                    );
+                    condValue = 0;
+                }
+
+                // Если условие ложно, прыгаем
+                if (condValue == 0) {
+                    this->IP += (int)uByteArg2;
+                }
+                break;
+            } // конец case Enums::EV_EVAL
+#else
             case Enums::EV_EVAL: {
                 //printf("EV_EVAL -> %d\n", this->IP);
                 short n3 = (short)this->getByteArg();
@@ -304,7 +569,7 @@ uint32_t ScriptThread::run() {
                 }
                 break;
             }
-
+#endif
             case Enums::EV_JUMP: {
                 //printf("EV_JUMP -> %d\n", this->IP);
                 this->IP += this->getUShortArg();

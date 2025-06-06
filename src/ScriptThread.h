@@ -20,7 +20,12 @@ public:
 	int flags;
 	int type;
 	bool throwAwayLoot;
-	int scriptStack[16];
+#ifdef ANDROID
+    static const int MAX_STACK_SIZE = 128;
+    int scriptStack[MAX_STACK_SIZE];
+#else
+    int scriptStack[16];
+#endif
 	int stackPtr;
 	Text* debugString;
 	Applet* app;
