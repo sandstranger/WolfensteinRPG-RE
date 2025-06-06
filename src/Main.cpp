@@ -142,8 +142,7 @@ JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineAc
         return true;
     }
     int currentCanvasState = appContainer->app->canvas->state;
-    return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_MINI_GAME ||
-    currentCanvasState ==Canvas::ST_COMBAT;
+    return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_COMBAT;
 }
 }
 #endif
