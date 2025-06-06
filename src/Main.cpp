@@ -133,5 +133,19 @@ JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivi
     CAppContainer::getInstance()->suspendOpenAL();
 }
 }
+
+#ifdef ANDROID
+extern "C" {
+JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_needToShowScreenControls(JNIEnv *env, jobject thisObject) {
+    CAppContainer *appContainer = CAppContainer::getInstance();
+    if (appContainer == nullptr || appContainer->app == nullptr || appContainer->app->canvas == nullptr){
+        return true;
+    }
+    int currentCanvasState = appContainer->app->canvas->state;
+    return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_MINI_GAME ||
+    currentCanvasState ==Canvas::ST_COMBAT;
+}
+}
+#endif
 #endif
 
