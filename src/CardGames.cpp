@@ -1319,9 +1319,7 @@ void CardGames::shutdown() {
     this->imgSwitchDown = nullptr;
 
     if (this->m_cardGamesButtons) {
-        if (this->m_cardGamesButtons!= nullptr) {
-            this->m_cardGamesButtons->~fmButtonContainer();
-        }
+        this->m_cardGamesButtons->~fmButtonContainer();
         operator delete(this->m_cardGamesButtons);
     }
     this->m_cardGamesButtons = nullptr;
