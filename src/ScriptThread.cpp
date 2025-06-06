@@ -148,6 +148,7 @@ void ScriptThread::alloc(int n, int type, bool b) {
     this->IP = (this->app->render->tileEvents[n] & (int)0xFFFF0000) >> 16;
     //printf("alloc : this->IP %d\n", this->IP);
     this->FP = 0;
+    this->allocated = true;
     this->stackPtr = 0;
     this->push(-1);
     this->push(0);
@@ -161,6 +162,7 @@ void ScriptThread::alloc(int n, int type, bool b) {
 void ScriptThread::alloc(int ip) {
     this->IP = ip;
     this->FP = 0;
+    this->allocated = true;
     this->stackPtr = 0;
     this->push(-1);
     this->push(0);
@@ -221,7 +223,10 @@ void ScriptThread::setupCamera(int n) {
 }
 
 uint32_t ScriptThread::run() {
-    this->app = CAppContainer::getInstance()->app;
+    if (!this->allocated){
+        return 1;
+    }
+
     this->app->game->updateScriptVars();
     if (this->stackPtr == 0) {
         return 1;
@@ -1774,6 +1779,7 @@ uint32_t ScriptThread::run() {
 
 void ScriptThread::init() {
     //printf("ScriptThread::init\n");
+    this->allocated = true;
     this->stackPtr = 0;
     this->IP = 0;
     this->FP = 0;

@@ -21,6 +21,7 @@ class Game
 private:
 
 public:
+    static constexpr int SCRIPTS_THREADS_SIZE = 20;
     static constexpr int ENTITY_MASK = 65535;
 
     static constexpr int DIFFICULTY_NORMAL = 1;
@@ -143,7 +144,7 @@ public:
     Entity* watchLine;
     LerpSprite lerpSprites[16];
     int numLerpSprites;
-    ScriptThread scriptThreads[20];
+    ScriptThread scriptThreads[SCRIPTS_THREADS_SIZE];
     int numScriptThreads;
     bool pathVisited[64];
     short pathParents[64];

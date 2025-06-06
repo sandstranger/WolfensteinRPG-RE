@@ -24,6 +24,7 @@ public:
 	int stackPtr;
 	Text* debugString;
 	Applet* app;
+    bool allocated = false;
 
 	// Constructor
 	ScriptThread();
