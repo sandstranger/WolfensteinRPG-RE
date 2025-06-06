@@ -5601,22 +5601,34 @@ void Canvas::endKickingRound() {
 }
 
 void Canvas::endKickingGame() {
-	Applet* app = CAppContainer::getInstance()->app;
-	if (!this->isChickenKicking) {
-		return;
-	}
+    Applet *app = CAppContainer::getInstance()->app;
+    if (!this->isChickenKicking) {
+        return;
+    }
 
-	this->hKickingBar->~Image();
+    if (this->hKickingBar != nullptr) {
+        this->hKickingBar->~Image();
+    }
 	this->hKickingBar = nullptr;
-	this->vKickingBar->~Image();
+    if (this->vKickingBar!= nullptr) {
+        this->vKickingBar->~Image();
+    }
 	this->vKickingBar = nullptr;
-	this->imgChickenKicking_ScoreBG->~Image();
+    if (this->imgChickenKicking_ScoreBG!= nullptr) {
+        this->imgChickenKicking_ScoreBG->~Image();
+    }
 	this->imgChickenKicking_ScoreBG = nullptr;
-	this->imgChickenKicking_05Highlight->~Image();
+    if (this->imgChickenKicking_05Highlight!= nullptr) {
+        this->imgChickenKicking_05Highlight->~Image();
+    }
 	this->imgChickenKicking_05Highlight = nullptr;
-	this->imgChickenKicking_20Highlight->~Image();
+    if (this->imgChickenKicking_20Highlight!= nullptr) {
+        this->imgChickenKicking_20Highlight->~Image();
+    }
 	this->imgChickenKicking_20Highlight = nullptr;
-	this->imgChickenKicking_30Highlight->~Image();
+    if (this->imgChickenKicking_30Highlight!= nullptr) {
+        this->imgChickenKicking_30Highlight->~Image();
+    }
 	this->imgChickenKicking_30Highlight = nullptr;
 
 	this->kickingPhase = 0;

@@ -1281,29 +1281,47 @@ void CardGames::explodeCards() {
 }
 
 void CardGames::shutdown() {
-    this->imgOtherImgs->~Image();
+    if (this->imgOtherImgs != nullptr) {
+        this->imgOtherImgs->~Image();
+    }
     this->imgOtherImgs = nullptr;
-    this->imgTable->~Image();
+    if (this->imgTable != nullptr) {
+        this->imgTable->~Image();
+    }
     this->imgTable = nullptr;
-    this->flakImg->~Image();
+    if (this->flakImg != nullptr) {
+        this->flakImg->~Image();
+    }
     this->flakImg = nullptr;
-    this->imgUpPointerNormal->~Image();
+    if (this->imgUpPointerNormal != nullptr) {
+        this->imgUpPointerNormal->~Image();
+    }
     this->imgUpPointerNormal = nullptr;
-    this->imgUpPointerPressed->~Image();
+    if (this->imgUpPointerPressed != nullptr) {
+        this->imgUpPointerPressed->~Image();
+    }
     this->imgUpPointerPressed = nullptr;
-    this->imgDownPointerNormal->~Image();
+    if (this->imgDownPointerNormal != nullptr) {
+        this->imgDownPointerNormal->~Image();
+    }
     this->imgDownPointerNormal = nullptr;
-    this->imgDownPointerPressed->~Image();
+    if (this->imgDownPointerPressed != nullptr) {
+        this->imgDownPointerPressed->~Image();
+    }
     this->imgDownPointerPressed = nullptr;
-    this->imgSwitchUp->~Image();
+    if (this->imgSwitchUp!= nullptr) {
+        this->imgSwitchUp->~Image();
+    }
     this->imgSwitchUp = nullptr;
-    this->imgSwitchDown->~Image();
-    this->imgSwitchDown = nullptr;
-    this->imgSwitchDown->~Image();
+    if (this->imgSwitchDown!= nullptr){
+        this->imgSwitchDown->~Image();
+    }
     this->imgSwitchDown = nullptr;
 
     if (this->m_cardGamesButtons) {
-        this->m_cardGamesButtons->~fmButtonContainer();
+        if (this->m_cardGamesButtons!= nullptr) {
+            this->m_cardGamesButtons->~fmButtonContainer();
+        }
         operator delete(this->m_cardGamesButtons);
     }
     this->m_cardGamesButtons = nullptr;
