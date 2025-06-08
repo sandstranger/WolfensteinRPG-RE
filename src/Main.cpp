@@ -134,7 +134,6 @@ JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivi
 }
 }
 
-#ifdef ANDROID
 extern "C" {
 JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_needToShowScreenControls(JNIEnv *env, jobject thisObject) {
     CAppContainer *appContainer = CAppContainer::getInstance();
@@ -145,6 +144,5 @@ JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineAc
     return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_COMBAT;
 }
 }
-#endif
 #endif
 
