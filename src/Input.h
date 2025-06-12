@@ -83,9 +83,10 @@ struct JoystickAxis {
 
 extern char buttonNames[][NUM_GAMEPAD_INPUTS];
 
-#define KEYBINDS_MAX 10
+#define KEYBINDS_MAX 11
 #define IS_MOUSE_BUTTON			0x100000
 #define IS_CONTROLLER_BUTTON	0x200000
+#define IS_CONTROLLER_TRIGGER	0x400000
 typedef struct keyMapping_s {
 	int avk_action;
 	int keyBinds[KEYBINDS_MAX];
