@@ -239,11 +239,11 @@ GamepadInput sdlJoyAxisToInput(const uint8_t axis, const float value) noexcept {
         float xVal = value;
         // Below of dead zone
         if (xVal < -0) {
-            return (numAxes <= 2) ? GamepadInput::BTN_DPAD_LEFT : GamepadInput::BTN_LAXIS_LEFT;
+            return GamepadInput::BTN_DPAD_LEFT;
         }
         // Above of dead zone
         else if (xVal > 0) {
-            return (numAxes <= 2) ? GamepadInput::BTN_DPAD_RIGHT : GamepadInput::BTN_LAXIS_RIGHT;
+            return GamepadInput::BTN_DPAD_RIGHT;
         }
     }
     case 1: {
@@ -251,11 +251,11 @@ GamepadInput sdlJoyAxisToInput(const uint8_t axis, const float value) noexcept {
         float yVal = value;
         // Below of dead zone
         if (yVal < -0) {
-            return (numAxes <= 2) ? GamepadInput::BTN_DPAD_UP : GamepadInput::BTN_LAXIS_UP;
+            return GamepadInput::BTN_DPAD_UP;
         }
         // Above of dead zone
         else if (yVal > 0) {
-            return (numAxes <= 2) ? GamepadInput::BTN_DPAD_DOWN : GamepadInput::BTN_LAXIS_DOWN;
+            return GamepadInput::BTN_DPAD_DOWN;
         }
     }
     case 3: {
@@ -358,46 +358,26 @@ static void closeCurrentGameController() noexcept {
     gJoystickId = {};
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------
-// Rescans for SDL game controllers and generic joysticks to use: just uses the first available controller or joystick.
-// This may choose wrong in a multi-gamepad/joystick situation but the user can always disconnect one to clarify which one is wanted.
-// Most computer users would probably only want one gamepad or joystick connected at a time anyway?
-//------------------------------------------------------------------------------------------------------------------------------------------
-static void rescanGameControllers() noexcept {
-    // If we already have a gamepad or generic joystick then just re-check that it is still connected.
-    // Note that we can check if a gamepad is connected by checking if the associated joystick is connected.
-    if (gpJoystick) {
-        if (!SDL_JoystickGetAttached(gpJoystick)) {
-            closeCurrentGameController();
-        }
-    }
+static void rescanGameControllers(int joyIdx) noexcept {
 
-    // See if there are any joysticks connected.
-    // Note: a return of < 0 means an error, which we will ignore:
-    const int numJoysticks = SDL_NumJoysticks();
+    gpGameController = SDL_GameControllerOpen(joyIdx);
 
-    for (int joyIdx = 0; joyIdx < numJoysticks; ++joyIdx) {
-        // If we find a valid game controller or generic joystick then try to open it.
-        // If we succeed then our work is done!
-        if (SDL_IsGameController(joyIdx)) {
-            printf("IsGameController\n");
-            // This is a game controller - try opening that way
-            gpGameController = SDL_GameControllerOpen(joyIdx);
-
-            if (gpGameController) {
-                gpJoystick = SDL_GameControllerGetJoystick(gpGameController);
-                gJoystickId = SDL_JoystickInstanceID(gpJoystick);
+    if (gpGameController) {
+        gpJoystick = SDL_GameControllerGetJoystick(gpGameController);
+        gJoystickId = SDL_JoystickInstanceID(gpJoystick);
 
 #ifdef _WIN32
-                // Check if joystick supports Rumble
+        // Check if joystick supports Rumble
                 if (!SDL_GameControllerHasRumble(gpGameController)) {
                     printf("Warning: Game controller does not have rumble! SDL Error: %s\n", SDL_GetError());
                 }
 #endif
-                break;
-            }
-        }
+        return;
+    }
 
+
+    // If we already have a gamepad or generic joystick then just re-check that it is still connected.
+    // Note that we can check if a gamepad is connected by checking if the associated joystick is connected.
         // Fallback to opening the controller as a generic joystick if it's not supported through the game controller interface
         gpJoystick = SDL_JoystickOpen(joyIdx);
 
@@ -423,7 +403,46 @@ static void rescanGameControllers() noexcept {
                     }
                 }
             }
-            break;
+        }
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------
+// Rescans for SDL game controllers and generic joysticks to use: just uses the first available controller or joystick.
+// This may choose wrong in a multi-gamepad/joystick situation but the user can always disconnect one to clarify which one is wanted.
+// Most computer users would probably only want one gamepad or joystick connected at a time anyway?
+//------------------------------------------------------------------------------------------------------------------------------------------
+static void rescanGameControllers() noexcept {
+    // If we already have a gamepad or generic joystick then just re-check that it is still connected.
+    // Note that we can check if a gamepad is connected by checking if the associated joystick is connected.
+    if (gpJoystick) {
+        if (!SDL_JoystickGetAttached(gpJoystick)) {
+            closeCurrentGameController();
+        }
+    }
+
+    // See if there are any joysticks connected.
+    // Note: a return of < 0 means an error, which we will ignore:
+    const int numJoysticks = SDL_NumJoysticks();
+
+    for (int joyIdx = 0; joyIdx < numJoysticks; ++joyIdx) {
+        // If we find a valid game controller or generic joystick then try to open it.
+        // If we succeed then our work is done!
+        if (SDL_IsGameController(joyIdx)) {
+            rescanGameControllers(joyIdx);
+
+            if (gpJoystick){
+                return;
+            }
+        }
+    }
+
+    for (int joyIdx = 0; joyIdx < numJoysticks; ++joyIdx) {
+        // If we find a valid game controller or generic joystick then try to open it.
+        // If we succeed then our work is done!
+        rescanGameControllers(joyIdx);
+
+        if (gpJoystick){
+            return;
         }
     }
 }
