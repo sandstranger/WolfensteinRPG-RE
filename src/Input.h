@@ -83,14 +83,25 @@ struct JoystickAxis {
 
 extern char buttonNames[][NUM_GAMEPAD_INPUTS];
 
-#define KEYBINDS_MAX 11
+#define KEYBINDS_MAX 12
 #define IS_MOUSE_BUTTON			0x100000
 #define IS_CONTROLLER_BUTTON	0x200000
-#define IS_CONTROLLER_TRIGGER	0x400000
+#define IS_CONTROLLER_AXIS	0x400000
 typedef struct keyMapping_s {
 	int avk_action;
 	int keyBinds[KEYBINDS_MAX];
 } keyMapping_t;
+
+typedef enum GameControllerAxis
+{
+    SDL_CONTROLLER_AXIS_LEFT_DOWN,
+    SDL_CONTROLLER_AXIS_LEFT_UP,
+    SDL_CONTROLLER_AXIS_LEFT_LEFT,
+    SDL_CONTROLLER_AXIS_LEFT_RIGHT,
+    SDL_CONTROLLER_AXIS_TRIGGER_LEFT,
+    SDL_CONTROLLER_AXIS_TRIGGER_RIGHT
+} GameControllerAxis;
+
 
 #define KEY_MAPPIN_MAX 16
 extern keyMapping_t keyMapping[KEY_MAPPIN_MAX];
