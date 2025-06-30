@@ -2445,6 +2445,7 @@ void Game::removeState(bool b) {
 }
 
 void Game::saveEmptyConfig() {
+    return;
 	Applet* app = CAppContainer::getInstance()->app;
 	SDLGL* sdlGL = CAppContainer::getInstance()->sdlGL;
 	OutputStream OS;
