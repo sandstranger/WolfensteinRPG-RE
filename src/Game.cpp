@@ -2268,6 +2268,7 @@ void Game::loadConfig() {
                 SDL_memcpy(app->canvas->highScoreInitials, highScoreInitials, sizeof(highScoreInitials));
                 SDL_memcpy(keyMapping, lKeyMapping, sizeof(keyMapping));
                 SDL_memcpy(keyMappingTemp, keyMapping, sizeof(keyMapping));
+                this->saveConfig();
 			}
 			IS.close();
 			app->sound->updateVolume();
