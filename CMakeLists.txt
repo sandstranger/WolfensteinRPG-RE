@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(WolfensteinRPG)
 
+set(CMAKE_CXX_STANDARD 20)
+
 if (NOT ANDROID)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 else()

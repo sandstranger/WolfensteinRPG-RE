@@ -2130,7 +2130,45 @@ void Game::loadConfig() {
 
 	if (IS.loadFile(name, LT_FILE)) {
 		if (IS.readInt() == 29) {
-			this->difficulty = IS.readByte();
+            bool difficulty = this->difficulty;
+            bool allowSounds = app->sound->allowSounds;
+            bool areSoundsAllowed = allowSounds;
+            int soundFxVolume = app->sound->soundFxVolume;
+            int musicVolume = app->sound->musicVolume;
+            bool vibrateEnabled = app->canvas->vibrateEnabled;
+            bool enableHelp = app->player->enableHelp;
+            int language = app->localization->defaultLanguage;
+            int totalDeaths = app->player->totalDeaths;
+            int defaultAnimFrames = app->canvas->animFrames;
+            int m_controlLayout = app->canvas->m_controlLayout;
+            int m_controlAlpha = app->canvas->m_controlAlpha;
+            int helpBitmask = app->player->helpBitmask;
+            int invHelpBitmask = app->player->invHelpBitmask;
+            int ammoHelpBitmask = app->player->ammoHelpBitmask;
+            int weaponHelpBitmask = app->player->weaponHelpBitmask;
+            int armorHelpBitmask = app->player->armorHelpBitmask;
+            int indexes[MenuSystem::MAX_SAVED_INDEXES * 2];
+            int16_t highScores[5];
+            char highScoreInitials[15];
+
+            SDL_memcpy(indexes, app->menuSystem->indexes, sizeof(indexes));
+            SDL_memcpy(highScores, app->canvas->highScores, sizeof(highScores));
+            SDL_memcpy(highScoreInitials, app->canvas->highScoreInitials, sizeof(highScoreInitials));
+
+            bool recentBriefSave = app->canvas->recentBriefSave;
+            bool hasSeenIntro = this->hasSeenIntro;
+            int windowMode = sdlGL->windowMode;
+            bool vsync = sdlGL->vSync;
+            int resolutionIndex = sdlGL->resolutionIndex;
+            int vibrationIntensity = gVibrationIntensity;
+            int deadZone = gDeadZone;
+            bool wasInit = _glesObj->isInit;
+            keyMapping_t lKeyMapping[KEY_MAPPIN_MAX];
+            int localAnimFrames = app->canvas->animFrames;
+
+            SDL_memcpy(lKeyMapping, keyMapping, sizeof(lKeyMapping));
+
+            this->difficulty = IS.readByte();
 			app->sound->allowSounds = IS.readBoolean();
 			app->sound->allowMusics = IS.readBoolean();
 			app->canvas->areSoundsAllowed = app->sound->allowSounds;
@@ -2193,7 +2231,43 @@ void Game::loadConfig() {
 			SDL_memcpy(keyMappingTemp, keyMapping, sizeof(keyMapping));
 
 			if (IS.readInt() != 0xDEADBEEF) {
-				app->Error("Failed marker check in loadConfig()");
+                this->difficulty = difficulty;
+                app->sound->allowSounds = allowSounds;
+                app->canvas->areSoundsAllowed = areSoundsAllowed;
+                app->sound->soundFxVolume = soundFxVolume;
+                app->sound->musicVolume = musicVolume;
+                app->canvas->vibrateEnabled = vibrateEnabled;
+                app->player->enableHelp = enableHelp;
+                app->localization->setLanguage(language);
+                app->player->totalDeaths = totalDeaths;
+                app->canvas->setAnimFrames(localAnimFrames);
+                app->canvas->m_controlLayout = m_controlLayout;
+                if (app->canvas->m_controlLayout > 2) {
+                    app->canvas->m_controlLayout = 0;
+                }
+                app->canvas->m_controlAlpha = m_controlAlpha;
+                app->player->helpBitmask = helpBitmask;
+                app->player->invHelpBitmask = invHelpBitmask;
+                app->player->ammoHelpBitmask = ammoHelpBitmask;
+                app->player->weaponHelpBitmask = weaponHelpBitmask;
+                app->player->armorHelpBitmask = armorHelpBitmask;
+
+                app->canvas->recentBriefSave = recentBriefSave;
+                this->hasSeenIntro = hasSeenIntro;
+
+                // [GEC] Port Configurations
+                sdlGL->windowMode = windowMode;
+                sdlGL->vSync = vsync;
+                sdlGL->resolutionIndex = resolutionIndex;
+                gVibrationIntensity = vibrationIntensity;
+                gDeadZone = deadZone;
+                _glesObj->isInit = wasInit;
+
+                SDL_memcpy(app->menuSystem->indexes, indexes, sizeof(indexes));
+                SDL_memcpy(app->canvas->highScores, highScores, sizeof(highScores));
+                SDL_memcpy(app->canvas->highScoreInitials, highScoreInitials, sizeof(highScoreInitials));
+                SDL_memcpy(keyMapping, lKeyMapping, sizeof(keyMapping));
+                SDL_memcpy(keyMappingTemp, keyMapping, sizeof(keyMapping));
 			}
 			IS.close();
 			app->sound->updateVolume();
@@ -2445,7 +2519,6 @@ void Game::removeState(bool b) {
 }
 
 void Game::saveEmptyConfig() {
-    return;
 	Applet* app = CAppContainer::getInstance()->app;
 	SDLGL* sdlGL = CAppContainer::getInstance()->sdlGL;
 	OutputStream OS;
