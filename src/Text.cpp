@@ -628,19 +628,18 @@ static const char *wchar_to_utf8(const wchar_t *wide_str, int length) {
     return buffer.c_str();
 }
 
-static wchar_t* char_to_wchar(const char* utf8_str) {
-    if (!utf8_str) return nullptr;
+void Text::char_to_wchar(const char* utf8_str) {
+    if (!utf8_str) return;
 
     try {
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
         std::wstring wide_str = converter.from_bytes(utf8_str);
-
-        wchar_t* result = new wchar_t[wide_str.size() + 1];
-        wcscpy(result, wide_str.c_str());
-        return result;
+        auto array = wide_str.c_str();
+        _length = wcslen(array);
+        wcscpy(chars, array);
+        chars[_length] = L'\0';
     }
     catch (...) {
-        return nullptr;
     }
 }
 
@@ -672,15 +671,7 @@ void Text::translateText() {
     isTranslated = strcmp(charsArray, translatedCharsArray) != 0;
 
     if (isTranslated){
-        auto wchars = char_to_wchar(translatedCharsArray);
-        _length = wcslen(wchars);
-
-        for (int i = 0; i < _length; ++i) {
-            chars[i] = wchars[i];
-        }
-
-        chars[_length] = L'\0';
-        free(wchars);
+        char_to_wchar(translatedCharsArray);
     }
 }
 

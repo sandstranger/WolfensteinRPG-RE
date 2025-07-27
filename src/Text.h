@@ -141,6 +141,7 @@ class Text
 {
 private:
     bool containsValidChars();
+    void char_to_wchar(const char* utf8_str);
 public:
     bool isTranslated;
     wchar_t *chars;
