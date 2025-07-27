@@ -40,6 +40,7 @@ public:
 
 	static constexpr int FONT_HEIGHT[4] = { 16, 16, 18, 25 };
 	static constexpr int FONT_WIDTH[4] = { 12, 12, 13, 22 };
+    static constexpr int TTF_CHAR_SPACING = 11;
 	static constexpr int CHAR_SPACING[4] = { 11, 11, 12, 22 };
 
 #ifdef __linux__

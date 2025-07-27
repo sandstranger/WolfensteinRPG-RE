@@ -774,6 +774,7 @@ void Graphics::drawString(Image* img, Text* text, int x, int y, int h, int flags
     }
 
     int stringWidth = text->getStringWidth(strBeg, strBeg + strEnd, false);
+
     int n6 = x;
 
     if ((flags & 0x8) != 0x0) {
@@ -804,19 +805,20 @@ void Graphics::drawString(Image* img, Text* text, int x, int y, int h, int flags
             }
         }
         else if (char1 == ' ' || char1 == '\xA0') {
-            x += Applet::CHAR_SPACING[app->fontType];
+            x += useTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
         }
         else {
             if (char1 == '\\'/* && i < n7*/) {
                 auto char2 = text->charAt(++i);
                 int n8 = char2 - 'A';
+                bool renderGlyphAsTTF = useTTFRendering && isValidChar(char2);
                 if (n8 < 0 || n8 >= 15) {
-                    if (useTTFRendering && isValidChar(char2)){
+                    if (renderGlyphAsTTF){
                         renderGlyph(char2,x,y,rotateMode);
                     } else{
                         this->drawChar(img, char2, x, y, rotateMode);
                     }
-                    x += Applet::CHAR_SPACING[app->fontType];
+                    x += renderGlyphAsTTF ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
                 }
                 else {
                     this->drawBuffIconHelp(n8, x, y, 0);
@@ -824,12 +826,13 @@ void Graphics::drawString(Image* img, Text* text, int x, int y, int h, int flags
                 }
             }
             else {
-                if (useTTFRendering && isValidChar(char1)){
+                bool renderGlyphAsTTF = useTTFRendering && isValidChar(char1);
+                if (renderGlyphAsTTF){
                     renderGlyph(char1,x,y,rotateMode);
                 } else{
                     this->drawChar(img, char1, x, y, rotateMode);
                 }
-                x += Applet::CHAR_SPACING[app->fontType];
+                x += renderGlyphAsTTF ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
             }
         }
     }
@@ -901,7 +904,7 @@ void Graphics::drawCursor(int x, int y, int flags, bool b) {
     else {
         smallBuffer->append('\x84');
     }
-    this->drawString(smallBuffer, x, y, flags);
+    this->drawString(smallBuffer, x, y, flags, false);
     smallBuffer->dispose();
 }
 

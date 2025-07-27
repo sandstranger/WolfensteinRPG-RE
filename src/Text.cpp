@@ -1014,23 +1014,23 @@ int Text::insertLineBreak(int i, int i2, char c) {
 }
 
 int Text::getStringWidth() {
-	return this->getStringWidth(0, this->_length, true);
+	return this->getStringWidth(0, this->length(), true);
 }
 
 int Text::getStringWidth(bool b) {
-	return this->getStringWidth(0, this->_length, b);
+	return this->getStringWidth(0, this->length(), b);
 }
 
 int Text::getStringWidth(int i, int i2, bool b) {
 	Applet* app = CAppContainer::getInstance()->app;
 	int n2 = 0;
 	int n3 = 0;
-	if (i2 == -1 || i2 >= this->_length) {
-		i2 = this->_length;
+	if (i2 == -1 || i2 >= this->length()) {
+		i2 = this->length();
 	}
 	if (i >= 0 && i < i2) {
 		for (int j = i; j < i2; ++j) {
-			auto c = this->chars[j];
+			auto c = this->charAt(j);
 			if (c == '\n' || c == '|') {
 				if (!b) {
 					break;
@@ -1041,17 +1041,17 @@ int Text::getStringWidth(int i, int i2, bool b) {
 				}
 			}
 			else if (c == ' ') {
-				n3 += Applet::CHAR_SPACING[app->fontType];
+				n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			}
 			else if (c == '^' && j != i2 - 1) {
-				int16_t n4 = (int16_t)(this->chars[++j] - '0');
+				int16_t n4 = (int16_t)(this->charAt(++j) - '0');
 				if (n4 < 0 || n4 > 9) {
-					n3 += Applet::CHAR_SPACING[app->fontType];
+					n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 					--j;
 				}
 			}
 			else {
-				n3 += Applet::CHAR_SPACING[app->fontType];
+				n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			}
 		}
 	}
@@ -1063,8 +1063,8 @@ int Text::getStringWidth(int i, int i2, bool b) {
 
 int Text::getNumLines() {
 	int numLines = 1;
-	for (int i = 0; i < this->_length; ++i) {
-		char c = this->chars[i];
+	for (int i = 0; i < this->length(); ++i) {
+		char c = this->charAt(i);
 		if (c == '\n' || c == '|') {
 			++numLines;
 		}

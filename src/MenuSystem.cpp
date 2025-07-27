@@ -735,7 +735,8 @@ void MenuSystem::paint(Graphics* graphics) {
 				textBuffer2->insert(' ', 0);
 			}
 			textBuffer1->append(textBuffer2);
-			graphics->drawString(textBuffer1, app->canvas->SCR_CX, yPos + 3, 3);
+            textBuffer1->translateText();
+			graphics->drawString(textBuffer1, app->canvas->SCR_CX, yPos + 3, 3, false);
 			graphics->drawImage(this->imgGameMenuHealth, ((Applet::IOS_WIDTH - textBuffer1->getStringWidth()) >> 1) - 5, yPos + 3, 10, 0, 0);
 			graphics->drawImage(this->imgGameMenuShield, ((textBuffer1->getStringWidth() + Applet::IOS_WIDTH) >> 1) + 5, yPos + 3, 6, 0, 0);
 		}
@@ -966,6 +967,7 @@ LABEL_60:*/
 				}
 				if (action)
 				{
+                    textBuffer1->translateText();
 					v37 = textBuffer1->getStringWidth();
 					menuItem_width = this->menuItem_width;
 					if (v37 + 10 > menuItem_width)
@@ -982,6 +984,7 @@ LABEL_60:*/
 				}
 				if ((flags & Menus::ITEM_ALIGN_CENTER) != 0)
 				{
+                    textBuffer1->translateText();
 					v42 = textBuffer1->getStringWidth(false) >> 1;
 					if (action) {
 						v81 = menuRect[0] + (this->menuItem_width >> 1) - v42;
@@ -1049,10 +1052,10 @@ LABEL_60:*/
 						}
 						
 						if (action) {
-							graphics->drawString(textBuffer2, v45, v80 + (this->menuItem_height >> 1), 10);
+							graphics->drawString(textBuffer2, v45, v80 + (this->menuItem_height >> 1), 10, false);
 						}
 						else {
-							graphics->drawString(textBuffer2, v45, v80, 24);
+							graphics->drawString(textBuffer2, v45, v80, 24, false);
 						}
 						
 					}
@@ -1199,6 +1202,7 @@ LABEL_60:*/
 					graphics->drawRegion(app->hud->imgAttArrow, 0, 0, 12, 12, v81 - 17, v80, 0, 1, 0);
 				}
 				if (items->flags & Menus::ITEM_RIGHT_ARROW) {
+                    textBuffer1->translateText();
 					v56 = textBuffer1->getStringWidth(false);
 					graphics->drawRegion(app->hud->imgAttArrow, 0, 0, 12, 12, v56 + v81 + 5, v80, 0, 3, 0);
 				}

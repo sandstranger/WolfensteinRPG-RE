@@ -1978,6 +1978,7 @@ void Canvas::initScrollingText(short i, short i2, bool dehyphenate, int spacingH
 	this->dialogBuffer->wrapText((this->displayRect[2] - 8) / Applet::CHAR_SPACING[app->fontType]);
 	this->scrollingTextSpacing = spacingHeight;
 	this->scrollingTextStart = -1;
+    this->numLines = numLines;
 	this->scrollingTextLines = (this->dialogBuffer->getNumLines() + numLines);
 	this->scrollingTextMSLine = textMSLine;
 	this->scrollingTextDone = false;
@@ -3090,6 +3091,48 @@ void Canvas::combatState() {
 	}
 }
 
+void Canvas::updateDialogLines(int dialogStyle, int dialogFlags) {
+    int i = 0;
+    int n = 0;
+    int length2 = this->dialogBuffer->length();
+    this->numDialogLines = 0;
+    while (i < length2) {
+        if (this->dialogBuffer->charAt(i) == '|') {
+            this->dialogIndexes[this->numDialogLines * 2] = (short)n;
+            this->dialogIndexes[this->numDialogLines * 2 + 1] = (short)(i - n);
+            this->numDialogLines++;
+            n = i + 1;
+        }
+        ++i;
+    }
+    this->dialogIndexes[this->numDialogLines * 2] = (short)n;
+    this->dialogIndexes[this->numDialogLines * 2 + 1] = (short)(length2 - n);
+    this->numDialogLines++;
+    this->currentDialogLine = 0;
+    this->dialogLineStartTime = CAppContainer::getInstance()->app->time;
+    this->dialogTypeLineIdx = 0;
+    this->dialogStartTime = CAppContainer::getInstance()->app->time;
+    this->dialogItem = nullptr;
+    this->dialogFlags = dialogFlags;
+    this->dialogStyle = dialogStyle;
+}
+
+void Canvas::updateScrolling() {
+    this->scrollingTextStart = -1;
+    this->scrollingTextLines = (this->dialogBuffer->getNumLines() + numLines);
+    this->scrollingTextDone = false;
+}
+
+void Canvas::updatePrologueLines() {
+    this->storyPage = 0;
+    int spacingLines = this->scrollingTextSpacing * this->scrollingTextLines;
+    int spacingHeight = this->scrollingTextSpacingHeight;
+    this->storyTotalPages = spacingLines / spacingHeight;
+    if (spacingLines % spacingHeight) {
+        this->storyTotalPages += 1;
+    }
+}
+
 void Canvas::dialogState(Graphics* graphics) {
 	Applet* app = CAppContainer::getInstance()->app;
 
@@ -3165,6 +3208,14 @@ void Canvas::dialogState(Graphics* graphics) {
 		this->m_dialogButtons->GetButton(3)->drawButton = false;
 	}
 
+    if (!dialogBuffer->isTranslated) {
+        dialogBuffer->translateText();
+
+        if (dialogBuffer->isTranslated) {
+            updateDialogLines(dialogStyle, dialogFlags);
+        }
+    }
+
 	int currentDialogLine = 0;
 	if (this->dialogStyle == Enums::DLG_STYLE_HELP || this->dialogStyle == Enums::DLG_STYLE_SPECIAL) {
 		currentDialogLine = 1;
@@ -3183,7 +3234,7 @@ void Canvas::dialogState(Graphics* graphics) {
 			graphics->drawRegion(app->hud->imgActions, 0, 18 * this->specialLootIcon, 18, 18, dialogRect[2] - 18, dialogRect[1] - fontHeight - 1, 0, 0, 0);
 		}
 
-		graphics->drawString(this->dialogBuffer, this->SCR_CX, dialogRect[1] - fontHeight, 1, this->dialogIndexes[0], this->dialogIndexes[1]);
+		graphics->drawString(this->dialogBuffer, this->SCR_CX, dialogRect[1] - fontHeight, 1, this->dialogIndexes[0], this->dialogIndexes[1], false);
 	}
 	else if (this->dialogStyle == Enums::DLG_STYLE_CHEST) {
 		graphics->setColor(n2);
@@ -3196,7 +3247,7 @@ void Canvas::dialogState(Graphics* graphics) {
 			graphics->fillRect(dialogRect[0], dialogRect[1] - 12, dialogRect[2], 12);
 			graphics->setColor(color);
 			graphics->drawRect(dialogRect[0], dialogRect[1] - 12, dialogRect[2] - 1, 12);
-			graphics->drawString(this->dialogBuffer, dialogRect[0] + (dialogRect[2] + 10 - 2 >> 1), dialogRect[1] - 5, 3, this->dialogIndexes[0], this->dialogIndexes[1]);
+			graphics->drawString(this->dialogBuffer, dialogRect[0] + (dialogRect[2] + 10 - 2 >> 1), dialogRect[1] - 5, 3, this->dialogIndexes[0], this->dialogIndexes[1], false);
 
 			this->m_dialogButtons->GetButton(8)->SetTouchArea(*dialogRect, dialogRect[1] - 12, dialogRect[2], dialogRect[3] + 12);
 		}
@@ -3260,7 +3311,7 @@ void Canvas::dialogState(Graphics* graphics) {
 		else if (n12 < this->dialogTypeLineIdx) {
 			n15 = n14;
 		}
-		graphics->drawString(this->dialogBuffer, n, n11, 0, n13, n15);
+		graphics->drawString(this->dialogBuffer, n, n11, 0, n13, n15, false);
 		n11 += fontHeight;
 	}
 	int8_t b = this->OSC_CYCLE[app->time / 200 % 4];
@@ -4165,27 +4216,7 @@ void Canvas::prepareDialog(Text* text, int dialogStyle, int dialogFlags) {
 			this->dialogBuffer->wrapText(this->dialogWithBarMaxChars);
 		}
 	}
-	int length2 = this->dialogBuffer->length();
-	this->numDialogLines = 0;
-	while (i < length2) {
-		if (this->dialogBuffer->charAt(i) == '|') {
-			this->dialogIndexes[this->numDialogLines * 2 + 0] = (short)n;
-			this->dialogIndexes[this->numDialogLines * 2 + 1] = (short)(i - n);
-			this->numDialogLines++;
-			n = i + 1;
-		}
-		++i;
-	}
-	this->dialogIndexes[this->numDialogLines * 2 + 0] = (short)n;
-	this->dialogIndexes[this->numDialogLines * 2 + 1] = (short)(length2 - n);
-	this->numDialogLines++;
-	this->currentDialogLine = 0;
-	this->dialogLineStartTime = app->time;
-	this->dialogTypeLineIdx = 0;
-	this->dialogStartTime = app->time;
-	this->dialogItem = nullptr;
-	this->dialogFlags = dialogFlags;
-	this->dialogStyle = dialogStyle;
+    updateDialogLines(dialogStyle,dialogFlags);
 	smallBuffer->dispose();
 
 	if (dialogStyle == Enums::DLG_STYLE_HELP) {
@@ -4343,7 +4374,17 @@ void Canvas::drawStory(Graphics* graphics)
 	short i2;
 	Text* text;
 
-	if (this->storyPage < this->storyTotalPages) {
+    if (!this->dialogBuffer->isTranslated) {
+        dialogBuffer->translateText();
+        if (dialogBuffer->isTranslated) {
+            updateScrolling();
+            if (this->state== Canvas::ST_INTRO) {
+                updatePrologueLines();
+            }
+        }
+    }
+
+    if (this->storyPage < this->storyTotalPages) {
 
 		graphics->eraseRgn(this->displayRect);
 		graphics->drawImage(this->imgTravelBG, 0, 0, 0, 0, 0);

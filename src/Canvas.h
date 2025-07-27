@@ -22,7 +22,9 @@ struct TTFFontData{
 class Canvas
 {
 private:
-
+    void updateDialogLines(int dialogStyle, int dialogFlags);
+    void updatePrologueLines();
+    void updateScrolling();
 public:
 	static constexpr int KNOCKBACK_HEIGHT = 10;
 
@@ -294,6 +296,7 @@ public:
 	int scrollingTextEnd;
 	int scrollingTextMSLine;
 	int scrollingTextLines;
+    int numLines;
 	int scrollingTextSpacing;
 	bool scrollingTextDone;
 	int scrollingTextFontHeight;

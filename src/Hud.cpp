@@ -392,7 +392,8 @@ void Hud::drawTopBar(Graphics* graphics) {
 			if (n + Applet::FONT_WIDTH[app->fontType] + (length * Applet::FONT_WIDTH[app->fontType]) > app->canvas->hudRect[2]) {
 				length = (app->canvas->hudRect[2] - n) / Applet::CHAR_SPACING[app->fontType] - 1;
 			}
-			graphics->drawString(smallBuffer, n - app->canvas->screenRect[0], 11 - Applet::FONT_HEIGHT[app->fontType] / 2, 0, n3, length);
+			graphics->drawString(smallBuffer, n - app->canvas->screenRect[0], 11 - Applet::FONT_HEIGHT[app->fontType] / 2, 0, n3,
+                                 app->localization->enableSDLTTF ? -1 : length);
 		}
 	}
 	smallBuffer->dispose();
@@ -405,7 +406,11 @@ void Hud::drawCenterMessage(Graphics* graphics, Text* text, int color) {
 	if (w > app->canvas->hudRect[2]) {
 		w = app->canvas->hudRect[2];
 	}
-	int y = -app->canvas->screenRect[1] + 40;
+    bool enableSdlTTfRendering = app->localization->enableSDLTTF;
+    if (enableSdlTTfRendering){
+        w = lround(w * 1.5);
+    }
+    int y = -app->canvas->screenRect[1] + 40;
 	int x = -app->canvas->screenRect[0] + (app->canvas->hudRect[2] / 2);
 
 	int numLines = text->getNumLines();
@@ -421,14 +426,22 @@ void Hud::drawCenterMessage(Graphics* graphics, Text* text, int color) {
 	while ((first = text->findFirstOf('|', i)) >= 0) {
 		textBuff->setLength(0);
 		text->substring(textBuff, i, first);
-		graphics->drawString(textBuff, x, y, 17, 0, first - i);
+        if (enableSdlTTfRendering) {
+            graphics->drawString(textBuff, x, y, 17);
+        } else{
+            graphics->drawString(textBuff, x, y, 17, 0, first - i);
+        }
 		y += Applet::FONT_HEIGHT[app->fontType];
 		i = first + 1;
 	}
 
 	textBuff->setLength(0);
 	text->substring(textBuff, i);
-	graphics->drawString(textBuff, x, y, 17, 0, text->length() - i);
+    if (enableSdlTTfRendering){
+        graphics->drawString(textBuff, x, y, 17);
+    } else{
+        graphics->drawString(textBuff, x, y, 17, 0, text->length() - i);
+    }
 	textBuff->dispose();
 }
 
@@ -460,6 +473,7 @@ void Hud::drawCinematicText(Graphics* graphics) {
 		largeBuffer->setLength(0);
 		app->localization->composeText(app->hud->subTitleID, largeBuffer);
 		largeBuffer->wrapText(n2, 2, '\n');
+        largeBuffer->translateText();
 		int first = largeBuffer->findFirstOf('\n', 0);
 		if (first == -1) {
 			if (app->hud->showCinPlayer) {
@@ -467,7 +481,7 @@ void Hud::drawCinematicText(Graphics* graphics) {
 				flags = 4;
 				scr_CX = width + 10;
 			}
-			graphics->drawString(largeBuffer, scr_CX, n4, flags);
+			graphics->drawString(largeBuffer, scr_CX, n4, flags, false);
 		}
 		else {
 			if (app->hud->showCinPlayer) {
@@ -476,8 +490,8 @@ void Hud::drawCinematicText(Graphics* graphics) {
 				scr_CX = width + 10;
 			}
 
-			graphics->drawString(largeBuffer, scr_CX, n4, flags);
-			graphics->drawString(largeBuffer, scr_CX, n4 + Applet::FONT_HEIGHT[app->fontType], flags, first + 1, 9999);
+			graphics->drawString(largeBuffer, scr_CX, n4, flags, false);
+			graphics->drawString(largeBuffer, scr_CX, n4 + Applet::FONT_HEIGHT[app->fontType], flags, first + 1, 9999, false);
 		}
 	}
 	largeBuffer->dispose();
@@ -877,6 +891,7 @@ void Hud::drawBubbleText(Graphics* graphics) {
 			n += 25;
 		}
 	}
+    this->bubbleText->translateText();
 	int n5 = this->bubbleText->length() * Applet::CHAR_SPACING[app->fontType] + 6;
 	int n6 = Applet::FONT_HEIGHT[app->fontType] + 4;
 	int n7 = n2 - std::max(0, n5 + 2 - (app->canvas->screenRect[2] - n2));
@@ -891,7 +906,7 @@ void Hud::drawBubbleText(Graphics* graphics) {
 	graphics->drawLine(n7, n, n7, n + n6);
 	graphics->drawLine(n7 + n5, n, n7 + n5, n + n6);
 	graphics->drawLine(n7, n + n6, n7 + n5, n + n6);
-	graphics->drawString(this->bubbleText, n7 + 2, n + 3, 4);
+	graphics->drawString(this->bubbleText, n7 + 2, n + 3, 4, false);
 	graphics->drawRegion(app->canvas->imgChatHook_Monster, n3, n4, 10, 6, n7 + 5, n + n6, 0, 0, 0);
 }
 
