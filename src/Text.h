@@ -141,8 +141,6 @@ class Text
 {
 private:
     bool containsValidChars();
-    int _translatedLength;
-    wchar_t *translatedChars;
 public:
     bool isTranslated;
     wchar_t *chars;

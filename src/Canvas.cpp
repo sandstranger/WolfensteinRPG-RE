@@ -607,13 +607,13 @@ void Canvas::backPaint(Graphics* graphics) {
 			largeBuffer->append("Rndr ms: ");
 			largeBuffer->append(this->st_fields[0] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[0] * 100 / this->st_count - this->st_fields[0] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Bsp ms: ");
 			largeBuffer->append(this->st_fields[1] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[1] * 100 / this->st_count - this->st_fields[1] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Hud ms: ");
@@ -626,46 +626,46 @@ void Canvas::backPaint(Graphics* graphics) {
 			largeBuffer->append("Blit ms: ");
 			largeBuffer->append(n2 / this->st_count)->append('.');
 			largeBuffer->append(n2 * 100 / this->st_count - n2 / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Paus ms: ");
 			largeBuffer->append(this->st_fields[6] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[6] * 100 / this->st_count - this->st_fields[6] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Dbg ms: ");
 			largeBuffer->append(this->st_fields[9] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[9] * 100 / this->st_count - this->st_fields[9] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Loop ms: ");
 			largeBuffer->append(this->st_fields[7] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[7] * 100 / this->st_count - this->st_fields[7] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Key ms: ");
 			largeBuffer->append(this->st_fields[11] - this->st_fields[10]);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("State ms: ");
 			largeBuffer->append(this->st_fields[12] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[12] * 100 / this->st_count - this->st_fields[12] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append("Totl ms: ");
 			largeBuffer->append(this->st_fields[8] / this->st_count)->append('.');
 			largeBuffer->append(this->st_fields[8] * 100 / this->st_count - this->st_fields[8] / this->st_count * 100);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer->setLength(0);
 			largeBuffer->append(this->st_count);
-			graphics->drawString(largeBuffer, this->viewRect[0], n, 0);
+			graphics->drawString(largeBuffer, this->viewRect[0], n, 0, false);
 			n += Applet::FONT_HEIGHT[app->fontType];
 			this->debugTime = app->upTimeMs - this->debugTime;
 			largeBuffer->dispose();
@@ -688,33 +688,33 @@ void Canvas::backPaint(Graphics* graphics) {
 			largeBuffer2->append(app->render->clearColorBuffer)->append('/');
 			largeBuffer2->append(app->render->bltTime)->append('/');
 			largeBuffer2->append(n4);
-			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer2->setLength(0);
 			largeBuffer2->append("li: ");
 			largeBuffer2->append(app->render->lineRasterCount)->append('/');
 			largeBuffer2->append(app->render->lineCount);
-			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer2->setLength(0);
 			largeBuffer2->append("sp: ");
 			largeBuffer2->append(app->render->spriteRasterCount)->append('/');
 			largeBuffer2->append(app->render->spriteCount)->append('/');
 			largeBuffer2->append(app->render->numMapSprites);
-			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			if (app->render->renderMode == 63) {
 				largeBuffer2->setLength(0);
 				largeBuffer2->append("cnt: ");
 				largeBuffer2->append(app->tinyGL->spanCalls)->append('/');
 				largeBuffer2->append(app->tinyGL->spanPixels);
-				graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+				graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 				n3 += Applet::FONT_HEIGHT[app->fontType];
 				largeBuffer2->setLength(0);
 				largeBuffer2->append("tris: ");
 				largeBuffer2->append(app->tinyGL->countBackFace)->append('/');
 				largeBuffer2->append(app->tinyGL->countDrawn);
-				graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+				graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 				n3 += Applet::FONT_HEIGHT[app->fontType];
 			}
 			largeBuffer2->setLength(0);
@@ -724,7 +724,7 @@ void Canvas::backPaint(Graphics* graphics) {
 				v30 += app->osTime[i];
 			}
 			largeBuffer2->append(v30 / 8);
-			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			largeBuffer2->setLength(0);
 			largeBuffer2->append("Code: ");
@@ -733,7 +733,7 @@ void Canvas::backPaint(Graphics* graphics) {
 				v31 += app->codeTime[i];
 			}
 			largeBuffer2->append(v31 / 8);
-			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0);
+			graphics->drawString(largeBuffer2, this->viewRect[0], n3, 0, false);
 			largeBuffer2->dispose();
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 		}
@@ -770,7 +770,7 @@ void Canvas::backPaint(Graphics* graphics) {
 			else if (angle == Enums::ANGLE_SOUTHWEST) {
 				smallBuffer->append("SW");
 			}
-			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 0);
+			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 0, false);
 
 
 			char tmpBuffer[88];
@@ -779,19 +779,19 @@ void Canvas::backPaint(Graphics* graphics) {
 			sprintf(tmpBuffer, "X: %.4f", app->field_0x414);
 			smallBuffer->setLength(0);
 			smallBuffer->append(tmpBuffer);
-			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16);
+			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16, false);
 
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			sprintf(tmpBuffer, "Y: %.4f", app->field_0x418);
 			smallBuffer->setLength(0);
 			smallBuffer->append(tmpBuffer);
-			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16);
+			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16, false);
 
 			n3 += Applet::FONT_HEIGHT[app->fontType];
 			sprintf(tmpBuffer, "Z: %.4f", app->field_0x41c);
 			smallBuffer->setLength(0);
 			smallBuffer->append(tmpBuffer);
-			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16);
+			graphics->drawString(smallBuffer, this->viewRect[0] + 2, n3 + 2, 16, false);
 
 			smallBuffer->dispose();
 		}
