@@ -464,7 +464,9 @@ void Hud::drawCinematicText(Graphics* graphics) {
 		largeBuffer->setLength(0);
 		app->localization->composeText(app->hud->cinTitleID, largeBuffer);
 		largeBuffer->wrapText(n2, 1, '\n');
-		graphics->drawString(largeBuffer, scr_CX, 1, 1);
+        largeBuffer->translateText();
+		largeBuffer->wrapText(n2, 1, '\n');
+		graphics->drawString(largeBuffer, scr_CX, 1, 1, false);
 	}
 
 	if (app->hud->subTitleID != -1 && app->hud->subTitleTime > app->gameTime) {
@@ -474,7 +476,8 @@ void Hud::drawCinematicText(Graphics* graphics) {
 		app->localization->composeText(app->hud->subTitleID, largeBuffer);
 		largeBuffer->wrapText(n2, 2, '\n');
         largeBuffer->translateText();
-		int first = largeBuffer->findFirstOf('\n', 0);
+        largeBuffer->wrapText(n2, 2, '\n');
+        int first = largeBuffer->findFirstOf('\n', 0);
 		if (first == -1) {
 			if (app->hud->showCinPlayer) {
 				graphics->drawRegion(app->hud->imgPortraitsSM, 0, 0, this->imgPortraitsSM->width, this->imgPortraitsSM->height >> 1, 5, n4 - 6 /*(width - 32) / 2*/, 0, 0, 0);
