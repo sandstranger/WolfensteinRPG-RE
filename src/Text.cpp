@@ -8,6 +8,10 @@
 #include "Resource.h"
 #include "MenuStrings.h"
 #include "Entity.h"
+#include "SDL_log.h"
+#include <locale>
+#include <codecvt>
+#include <string>
 #if ANDROID
 #include "algorithm"
 #endif
@@ -19,6 +23,8 @@ constexpr char* Localization::STRINGS_MENUS[4][49];
 
 Localization::Localization() {
 	memset(this, 0, sizeof(Localization));
+    enableMachineTextTranslation = strcmp(getenv("ENABLE_TEXTS_MACHINE_TRANSLATION"), "true") == 0;
+    enableSDLTTF = strcmp(getenv("ENABLE_SDL_TTF"), "true") == 0 || enableMachineTextTranslation;
 }
 
 Localization::~Localization() {
@@ -580,14 +586,97 @@ void Localization::getCharIndices(char c, int* i, int* i2)
 Text::Text(int countChars) {
 	//printf("Text::init\n");
 
-	this->chars = new char[countChars];
-	memset(this->chars, 0, countChars);
-	this->_length = 0;
-	this->chars[0] = '\0';
+	this->chars = new wchar_t [countChars];
+    wmemset(this->chars, 0, countChars);
+    this->translatedChars = new wchar_t [countChars];
+    std::wmemset(this->translatedChars, 0, countChars);
+    this->_length = this->_translatedLength = 0;
+	this->chars[0] = this->translatedChars[0] = '\0';
 	this->stringWidth = -1;
 }
 
 Text::~Text() {
+}
+
+static bool isValidChar(wchar_t ch) {
+    if (ch == L'\0') return false;
+
+    if (sizeof(wchar_t) == 2) {
+        if (ch >= 0xD800 && ch <= 0xDFFF) return false; // Суррогаты
+        if (ch > 0xFFFF) return false;
+    } else {
+        if (ch > 0x10FFFF) return false; // За пределами Unicode
+    }
+
+    if (std::iswcntrl(ch)) return false;
+
+    return true;
+}
+
+static const char *wchar_to_utf8(const wchar_t *wide_str, int length) {
+    static thread_local std::string buffer;
+    buffer.clear();
+    buffer.reserve(length);
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    for (int i = 0; i < length; i++) {
+        try {
+            if (isValidChar(wide_str[i])) {
+                buffer.append(converter.to_bytes(wide_str[i]));
+            }
+        }
+        catch (...) {
+        }
+    }
+    return buffer.c_str();
+}
+
+static wchar_t* char_to_wchar(const char* utf8_str) {
+    if (!utf8_str) return nullptr;
+
+    try {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        std::wstring wide_str = converter.from_bytes(utf8_str);
+
+        wchar_t* result = new wchar_t[wide_str.size() + 1];
+        wcscpy(result, wide_str.c_str());
+        return result;
+    }
+    catch (...) {
+        return nullptr;
+    }
+}
+
+bool Text::containsValidChars() {
+    for (int i = 0; i<_length; i++) {
+        if (isValidChar(chars[i])){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Text::translateText() {
+    bool needToTranslateText = !isTranslated && CAppContainer::getInstance()->app->localization->enableMachineTextTranslation
+                               && containsValidChars();
+    if (!needToTranslateText){
+        return;
+    }
+
+    auto charsArray = wchar_to_utf8(chars, _length);
+
+    if (!charsArray || strlen(charsArray) == 0){
+        return;
+    }
+
+    auto translatedCharsArray = translate(charsArray, false);
+
+    isTranslated = strcmp(charsArray, translatedCharsArray) != 0;
+
+    if (isTranslated){
+        translatedChars = char_to_wchar(translatedCharsArray);
+        _translatedLength = wcslen(translatedChars);
+    }
 }
 
 bool Text::startup() {
@@ -597,26 +686,29 @@ bool Text::startup() {
 }
 
 int Text::length() {
-	return this->_length;
+    return isTranslated ? _translatedLength : this->_length;
 }
 
 void Text::setLength(int i) {
 	if (i < 0) {
 		i = 0;
 	}
-	this->_length = i;
-	this->chars[i] = '\0';
+    this->_length = i;
+    this->chars[i] = this->translatedChars[0] = '\0';
+    isTranslated = false;
+    this->_translatedLength = 0;
 }
 
 Text* Text::deleteAt(int i, int i2) {
-	memcpy(this->chars + i, this->chars + i + i2, this->_length - (i + i2));
+	wmemcpy(this->chars + i, this->chars + i + i2, this->_length - (i + i2));
 	this->_length -= i2;
+    isTranslated = false;
 	this->chars[this->_length] = '\0';
 	return this;
 }
 
-char Text::charAt(int i) {
-	return this->chars[i];
+wchar_t Text::charAt(int i) {
+    return isTranslated ? translatedChars[i] : this->chars[i];
 }
 
 void Text::setCharAt(char c, int i) {
@@ -632,6 +724,7 @@ Text* Text::append(char c) {
 Text* Text::append(uint8_t c) {
 	this->chars[this->_length++] = (char)c;
 	this->chars[this->_length] = '\0';
+    isTranslated = false;
 	return this;
 }
 
@@ -641,46 +734,54 @@ Text* Text::append(char* c) {
 	for (i = 0; i < len; i++) {
 		this->chars[this->_length++] = c[i];
 	}
+    isTranslated = false;
 	this->chars[this->_length] = '\0';
 	return this;
 }
 
 Text* Text::append(int i) {
+    isTranslated = false;
 	return this->insert(i, this->_length);
 }
 
 Text* Text::append(Text* t) {
+    isTranslated = false;
 	return this->append(t, 0, t->_length);
 }
 
 Text* Text::append(Text* t, int i) {
+    isTranslated = false;
 	return this->append(t, i, t->_length - i);
 }
 
 Text* Text::append(Text* t, int i, int i2) {
 	if (i2 > 0) {
-		memcpy(this->chars + this->_length, t->chars + i, i2);
+        wmemcpy(this->chars + this->_length, t->chars + i, i2);
 		this->_length += i2;
 		this->chars[this->_length] = '\0';
+        isTranslated = false;
 	}
 	return this;
 }
 
 Text* Text::insert(char c, int i) {
-	memcpy(this->chars + i + 1, this->chars + i, this->_length - i);
+    wmemcpy(this->chars + i + 1, this->chars + i, this->_length - i);
 	this->chars[i] = c;
+    isTranslated = false;
 	this->chars[++this->_length] = '\0';
 	return this;
 }
 
 Text* Text::insert(uint8_t c, int i) {
-	memcpy(this->chars + i + 1, this->chars + i, this->_length - i);
+    wmemcpy(this->chars + i + 1, this->chars + i, this->_length - i);
 	this->chars[i] = c;
+    isTranslated = false;
 	this->chars[++this->_length] = '\0';
 	return this;
 }
 
 Text* Text::insert(int i, int i2) {
+    isTranslated = false;
 	if (i < 0) {
 		this->insert('-', i2);
 		++i2;
@@ -694,11 +795,13 @@ Text* Text::insert(int i, int i2) {
 }
 
 Text* Text::insert(char* c, int i) {
+    isTranslated = false;
 	return this->insert(c, 0, strlen(c), i);
 }
 
 Text* Text::insert(char* c, int i, int i2, int i3) {
-	memcpy(this->chars + i3 + i2, this->chars + i3, this->_length - i3);
+    isTranslated = false;
+    wmemcpy(this->chars + i3 + i2, this->chars + i3, this->_length - i3);
 	this->_length += i2;
 	while (--i2 >= 0) {
 		this->chars[i3++] = c[i++];
@@ -760,12 +863,14 @@ int Text::findLastOf(char c, int n) {
 }
 
 void Text::substring(Text* t, int i) {
+    t->isTranslated = false;
 	for (int j = i; j < this->_length; j++) {
 		t->chars[t->_length++] = this->chars[j];
 	}
 }
 
 void Text::substring(Text* t, int i, int i2) {
+    t->isTranslated = false;
 	for (int j = i; j < (i + i2); j++) {
 		t->chars[t->_length++] = this->chars[j];
 	}
@@ -814,8 +919,10 @@ int Text::wrapText(int i, int i2, char c) {
 }
 
 int Text::wrapText(int i, int i2, int i3, char c) {
+    isTranslated = false;
 	char wordBreaks[5];
-	char* chars, n8;
+	char n8;
+    wchar_t * chars;
 	bool n9;
 	int length, n4, n5, n6, n7, n10, n11, n12;
 
@@ -923,7 +1030,7 @@ int Text::getStringWidth(int i, int i2, bool b) {
 	}
 	if (i >= 0 && i < i2) {
 		for (int j = i; j < i2; ++j) {
-			char c = this->chars[j];
+			auto c = this->chars[j];
 			if (c == '\n' || c == '|') {
 				if (!b) {
 					break;

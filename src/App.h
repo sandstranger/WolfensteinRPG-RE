@@ -1161,6 +1161,9 @@ public:
 	void StartAccelerometer();
 	void StopAccelerometer();
 	void CalcAccelerometerAngles();
+    [[nodiscard]] bool warFontActive () const{
+        return fontType >= 3;
+    }
 };
 
 

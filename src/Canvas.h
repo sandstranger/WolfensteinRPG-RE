@@ -15,6 +15,10 @@ class fmScrollButton;
 class fmButton;
 class fmSwipeArea;
 
+struct TTFFontData{
+
+};
+
 class Canvas
 {
 private:
@@ -79,6 +83,7 @@ public:
 	static constexpr int ST_MIXING = 20;
 	static constexpr int ST_TRAVELMAP = 21;
 	static constexpr int ST_LOGO = 22;
+    static constexpr int TTF_FONTS_SIZE = 3;
 
 	static constexpr int viewStepValues[] = { 64, 0, 64, -64, 0, -64, -64, -64, -64, 0, -64, 64, 0, 64, 64, 64 };
 
@@ -134,6 +139,8 @@ public:
 	int storyTotalPages;
 	int fontRenderMode;
 	Image* imgFonts[4];
+    TTFFontItem* ttfFonts [TTF_FONTS_SIZE];
+    TTFFontItem* ttfFont;
 	Image* imgFont;
 	Image* imgMapCursor;
 	Image* imgChatHook_NPC;

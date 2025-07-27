@@ -619,6 +619,10 @@ void Applet::setFont(int fontType) {
 	if (fontType <= 3) {
 		this->fontType = fontType;
 		this->canvas->imgFont = this->canvas->imgFonts[fontType];
+
+        if (!warFontActive()){
+            canvas->ttfFont = canvas->ttfFonts[fontType];
+        }
 	}
 }
 

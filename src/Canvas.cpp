@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <climits>
+#include <string>
 #include <assert.h>
 
 #include "SDLGL.h"
@@ -41,17 +42,23 @@ constexpr char Canvas::numCharTable[10][6];
 constexpr int Canvas::ARROW_DATA[16];
 constexpr int Canvas::SELECTORPOS[18];
 constexpr int Canvas::MAG_DATA[15];
+static std::string pathToTTFFont;
 
 Canvas::Canvas() {
 	memset(this, 0, sizeof(Canvas));
+    pathToTTFFont = std::getenv("ANDROID_GAME_PATH");
+    pathToTTFFont +="/UnifontExMono.ttf";
 }
 
 Canvas::~Canvas() {
+    TTF_CloseFont(ttfFont[0].font);
+    TTF_Quit();
 }
 
 bool Canvas::isLoaded;
 
 bool Canvas::startup() {
+    TTF_Init();
 	Applet* app = CAppContainer::getInstance()->app;
 	int viewWidth, viewHeight;
 	fmButton* button;
@@ -187,6 +194,23 @@ bool Canvas::startup() {
 		this->startupMap = 1;
 		this->skipIntro = false;
 		this->tellAFriend = false;
+        auto smallTTFFont = TTF_OpenFont(pathToTTFFont.c_str(), 16);
+
+        SDL_Color whiteSdlColor = {255, 255, 255, 255};
+        SDL_Color blackSdlColor = {0, 0, 0, 255};
+
+        auto *lightSmallFontItem = (TTFFontItem*)malloc(sizeof(TTFFontItem));
+        lightSmallFontItem->font = smallTTFFont;
+        lightSmallFontItem->color = whiteSdlColor;
+
+        auto *blackSmallFontItem = (TTFFontItem*)malloc(sizeof(TTFFontItem));
+        blackSmallFontItem->font = smallTTFFont;
+        blackSmallFontItem->color = blackSdlColor;
+
+        ttfFonts[0] = lightSmallFontItem;
+        ttfFonts[1] = blackSmallFontItem;
+        ttfFonts[2] = lightSmallFontItem;
+        this->ttfFont = this->ttfFonts[0];
 
 		app->beginImageLoading();
 		//this->imgDialogScroll = app->loadImage("DialogScroll.bmp", true);

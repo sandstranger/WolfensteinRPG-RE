@@ -2,6 +2,7 @@
 #define __TEXT_H__
 
 #include "MenuStrings.h"
+#include "Translator.h"
 
 class Text;
 class InputStream;
@@ -17,22 +18,7 @@ private:
 public:
 	static constexpr int MAXBUFFERS = 7;
 	static constexpr int MAX_STRING_ARGS = 50;
-	static constexpr uint8_t C_LINE = '\x80';
-	static constexpr uint8_t C_ELLIPSES = '\x85';
-	static constexpr uint8_t C_RED_ING = '¼';
-	static constexpr uint8_t C_BLUE_ING = '½';
-	static constexpr uint8_t C_GREEN_ING = '¾';
-	static constexpr uint8_t C_CHECK = '\x87';
-	static constexpr uint8_t C_MINIDASH = '\x88';
-	static constexpr uint8_t C_CURSOR2 = '\x84';
-	static constexpr uint8_t C_CURSOR = '\x8a';
-	static constexpr uint8_t C_POINTER = '\x90';
-	static constexpr uint8_t C_GREYLINE = '\x89';
-	static constexpr uint8_t C_HEART = '\x8d';
-	static constexpr uint8_t C_SHIELD = '\x8b';
 	static constexpr uint8_t HYPHEN = '-';
-	static constexpr uint8_t NEWLINE = '|';
-	static constexpr uint8_t HARD_SPACE = ' ';
 
 	static constexpr char* STRINGS_MENUS[4][49] = {
 		{ // INGLES
@@ -49,17 +35,17 @@ public:
 		"Controller", "Vibration", "Vibration Intensity", "Deadzone", "Control layout:"
 		},
 		{ // FRANCES Appuyez sur une nouvelle touche pour
-		"Options", "Langue", "Son", "Vidéo", "Commandes",
+		"Options", "Langue", "Son", "Vidï¿½o", "Commandes",
 		"Son", "Volume effets :", "Volume musique :",
-		"Vidéo", "Mod.Affichage :", "Fenêtré", "Sans Bords", "Plein Écran", "VSync :", "Résolution :", "TinyGL :", "Valider Les Modifications",
-		"Commandes", "Contrôles Tactiles", "Assignation Commandes", "Manette",
-		"Contrôles Tactiles", "Transparence touches",
-		"Assignation Commandes", "Non Assgnée",
+		"Vidï¿½o", "Mod.Affichage :", "Fenï¿½trï¿½", "Sans Bords", "Plein ï¿½cran", "VSync :", "Rï¿½solution :", "TinyGL :", "Valider Les Modifications",
+		"Commandes", "Contrï¿½les Tactiles", "Assignation Commandes", "Manette",
+		"Contrï¿½les Tactiles", "Transparence touches",
+		"Assignation Commandes", "Non Assgnï¿½e",
 		"MOUVEMENT",
-		"Avant", "Arrière", "Dépl.Gauche", "Dépl.Droit", "Tourner Gauche", "Tourner Droit",
+		"Avant", "Arriï¿½re", "Dï¿½pl.Gauche", "Dï¿½pl.Droit", "Tourner Gauche", "Tourner Droit",
 		"AUTRE",
-		"Att/Parl/Util", "Arme Suivante", "Arme Précédente", "Pass.Tour", "Carte", "Menu", "Articles/Info", "Seringues", "Journal", "Réinitialiser Les Commandes", " ",
-		"Manette", "Vibration", "Intensité de Vibration", "Zone Morte", "Config. Contrôles"
+		"Att/Parl/Util", "Arme Suivante", "Arme Prï¿½cï¿½dente", "Pass.Tour", "Carte", "Menu", "Articles/Info", "Seringues", "Journal", "Rï¿½initialiser Les Commandes", " ",
+		"Manette", "Vibration", "Intensitï¿½ de Vibration", "Zone Morte", "Config. Contrï¿½les"
 		},
 		{ // ITALIANO Premi un nuovo tasto per
 		"Opzioni", "Lingua", "Audio", "Video", "Comandi",
@@ -72,24 +58,26 @@ public:
 		"Avanti", "Indietro", "Sposta Sinistra", "Sposta Destra", "Ruota Sinistra", "Ruota Destra",
 		"ALTRO",
 		"Att/Parl/Usa", "Arma Successiva", "Arma Precedente", "Pass.Turno", "Automappa", "Menu", "Oggetti/Info", "Siringhe", "Diario", "Ripristina Assegnazioni", " ",
-		"Controller", "Vibrazione", "Intensità Vibrazione", "Zona Morta", "Schema controlli"
+		"Controller", "Vibrazione", "Intensitï¿½ Vibrazione", "Zona Morta", "Schema controlli"
 		},
-		{ // ESPAÑOL Presiona una nueva tecla para
-		"Opciones", "Idioma", "Sonido", "Vídeo", "Entrada",
-		"Sonido", "Vol.Efectos:", "Vol.Música:",
-		"Vídeo", "Modo Ventana:", "En Ventana", "Sin Bordes", "Pant.Completa", "VSync:", "Resolución:", "TinyGL:", "Aplicar Cambios",
-		"Entrada", "Controles Táctiles", "Asignaciones", "Mando",
-		"Controles Táctiles", "Transparencia de Botones:",
+		{ // ESPAï¿½OL Presiona una nueva tecla para
+		"Opciones", "Idioma", "Sonido", "Vï¿½deo", "Entrada",
+		"Sonido", "Vol.Efectos:", "Vol.Mï¿½sica:",
+		"Vï¿½deo", "Modo Ventana:", "En Ventana", "Sin Bordes", "Pant.Completa", "VSync:", "Resoluciï¿½n:", "TinyGL:", "Aplicar Cambios",
+		"Entrada", "Controles Tï¿½ctiles", "Asignaciones", "Mando",
+		"Controles Tï¿½ctiles", "Transparencia de Botones:",
 		"Asignaciones", "Sin vincular",
 		"MOVIMIENTO",
 		"Adelante", "Atras", "Mover Izquierda", "Mover Derecha", "Girar Izquierda", "Girar Derecha",
 		"OTROS",
-		"Atq/Habl/Usar", "Arma Siguiente", "Arma Anterior", "Pasar Turno", "Automapa", "Menú", "Artículos/Info", "Jeringas", "Diario", "Restablecer Asignaciones", " ",
-		"Mando", "Vibración", "Intensidad de Vibración", "Zona Muerta", "Diseño de Control:"
+		"Atq/Habl/Usar", "Arma Siguiente", "Arma Anterior", "Pasar Turno", "Automapa", "Menï¿½", "Artï¿½culos/Info", "Jeringas", "Diario", "Restablecer Asignaciones", " ",
+		"Mando", "Vibraciï¿½n", "Intensidad de Vibraciï¿½n", "Zona Muerta", "Diseï¿½o de Control:"
 		}
 	};
 
-	Text* scratchBuffers[Localization::MAXBUFFERS];
+    bool enableSDLTTF;
+    bool enableMachineTextTranslation;
+    Text* scratchBuffers[Localization::MAXBUFFERS];
 	int bufferFlags;
 	Text* dynamicArgs;
 	int16_t argIndex[Localization::MAX_STRING_ARGS];
@@ -152,9 +140,12 @@ public:
 class Text
 {
 private:
-
+    bool containsValidChars();
+    int _translatedLength;
+    wchar_t *translatedChars;
 public:
-	char* chars;
+    bool isTranslated;
+    wchar_t *chars;
 	int _length;
 	int stringWidth;
 
@@ -165,9 +156,10 @@ public:
 
 	bool startup();
 	int length();
-	void setLength(int i);
+    void translateText();
+    void setLength(int i);
 	Text* deleteAt(int i, int i2);
-	char charAt(int i);
+    wchar_t charAt(int i);
 	void setCharAt(char c, int i);
 	Text* append(char c);
 	Text* append(uint8_t c);
