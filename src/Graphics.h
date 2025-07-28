@@ -42,7 +42,7 @@ private:
     GlyphCacheItem* GlyphCache_Find(Uint32 codePoint, TTFFontItem *font);
     void GlyphCache_Add(Uint32 codePoint, TTFFontItem *font,Image *image,int advance);
     GLuint CreateGlyphTexture(TTFFontItem * font, const char* chars, int* outAdvance);
-    void renderGlyph(wchar_t c,int x, int y, int rotateMode);
+    void renderGlyph(char32_t c,int x, int y, int rotateMode);
 public:
 
 	static constexpr short ANCHORS_NONE = 0;

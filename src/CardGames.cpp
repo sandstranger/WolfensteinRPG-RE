@@ -827,8 +827,12 @@ void CardGames::WAR_PLAYERCHOOSE_FUNC(Graphics* graphics) {
         smallBuffer->setLength(0);
         app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::GAME_PICK, smallBuffer);
         smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
-        smallBuffer->translateText();
-        smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+        if (!smallBuffer->isTranslated) {
+            smallBuffer->translateText();
+            if (smallBuffer->isTranslated) {
+                smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+            }
+        }
         graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_TEXT_Y, 1, false);
         this->drawSelector(graphics);
     }
@@ -843,8 +847,12 @@ void CardGames::WAR_PICKWARCARD_FUNC(Graphics* graphics, int n) {
         smallBuffer->setLength(0);
         app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::WAR_PICK, smallBuffer);
         smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
-        smallBuffer->translateText();
-        smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
+        if (!smallBuffer->isTranslated) {
+            smallBuffer->translateText();
+            if (smallBuffer->isTranslated) {
+                smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
+            }
+        }
         graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_WAR_TEXT_Y, 1, false);
         this->drawSelector(graphics);
     }
@@ -853,8 +861,12 @@ void CardGames::WAR_PICKWARCARD_FUNC(Graphics* graphics, int n) {
         smallBuffer->setLength(0);
         app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::DEALER_CHOOSING, smallBuffer);
         smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
-        smallBuffer->translateText();
-        smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+        if (!smallBuffer->isTranslated) {
+            smallBuffer->translateText();
+            if (smallBuffer->isTranslated) {
+                smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+            }
+        }
         graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_WAR_TEXT_Y, 1, false);
         this->drawSelector(graphics);
     }
@@ -869,8 +881,12 @@ void CardGames::WAR_DEALERCHOOSE_FUNC(Graphics* graphics, int n) {
     smallBuffer->setLength(0);
     app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::DEALER_CHOOSING, smallBuffer);
     smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
-    smallBuffer->translateText();
-    smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+    if (!smallBuffer->isTranslated) {
+        smallBuffer->translateText();
+        if (smallBuffer->isTranslated){
+        smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+        }
+    }
     graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_TEXT_Y, 1, false);
     this->drawSelector(graphics);
     smallBuffer->dispose();
@@ -884,8 +900,12 @@ void CardGames::WAR_DEALERDISCARD_FUNC(Graphics* graphics, int n) {
     smallBuffer->setLength(0);
     app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::DEALER_CHOOSING, smallBuffer);
     smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
-    smallBuffer->translateText();
-    smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+    if (!smallBuffer->isTranslated) {
+        smallBuffer->translateText();
+        if (smallBuffer->isTranslated) {
+            smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 2, '\n');
+        }
+    }
     graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_WAR_TEXT_Y, 1, false);
     this->drawSelector(graphics);
     smallBuffer->dispose();
@@ -949,8 +969,12 @@ void CardGames::WAR_PLAYERDISCARD_FUNC(Graphics* graphics) {
             app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::WAR_TOSS2, smallBuffer);
         }
         smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
-        smallBuffer->translateText();
-        smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
+        if (!smallBuffer->isTranslated) {
+            smallBuffer->translateText();
+            if (smallBuffer->isTranslated) {
+                smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 3, '\n');
+            }
+        }
         graphics->drawString(smallBuffer, app->canvas->SCR_CX, this->CARD_WAR_TEXT_Y, 1, false);
         this->drawSelector(graphics);
         smallBuffer->dispose();
@@ -1051,8 +1075,12 @@ void CardGames::WAR_MESSAGE_FUNC(Graphics* graphics) {
     app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::DOUBLE_SPACED, smallBuffer);
     app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::PRESS_OK, smallBuffer);
     smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 10, '\n');
-    smallBuffer->translateText();
-    smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 10, '\n');
+    if (!smallBuffer->isTranslated) {
+        smallBuffer->translateText();
+        if (smallBuffer->isTranslated) {
+            smallBuffer->wrapText(app->canvas->scrollWithBarMaxChars, 10, '\n');
+        }
+    }
     graphics->drawString(smallBuffer, app->canvas->SCR_CX, (this->START_BTM_BG + CardGames::BORDER_H) / 2, 3, false);
     smallBuffer->dispose();
 }

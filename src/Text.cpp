@@ -586,8 +586,8 @@ void Localization::getCharIndices(char c, int* i, int* i2)
 Text::Text(int countChars) {
 	//printf("Text::init\n");
 
-	this->chars = new wchar_t [countChars];
-    wmemset(this->chars, 0, countChars);
+	this->chars = new char32_t [countChars];
+    std::fill_n(this->chars, countChars, char32_t(0));
     this->_length = 0;
 	this->chars[0] = '\0';
 	this->stringWidth = -1;
@@ -596,26 +596,28 @@ Text::Text(int countChars) {
 Text::~Text() {
 }
 
-static bool isValidChar(wchar_t ch) {
-    if (ch == L'\0') return false;
+static bool isValidChar(char32_t ch) {
+    if (ch == U'\0') return false;
 
-    if (sizeof(wchar_t) == 2) {
-        if (ch >= 0xD800 && ch <= 0xDFFF) return false; // Суррогаты
-        if (ch > 0xFFFF) return false;
-    } else {
-        if (ch > 0x10FFFF) return false; // За пределами Unicode
-    }
+    // За пределами допустимого диапазона Unicode
+    if (ch > 0x10FFFF) return false;
 
-    if (std::iswcntrl(ch)) return false;
+    // Суррогаты недопустимы в UTF-32
+    if (ch >= 0xD800 && ch <= 0xDFFF) return false;
+
+    // Основные управляющие символы
+    if (ch < 0x20) return false;  // C0 control codes
+    if (ch >= 0x7F && ch < 0xA0) return false; // DEL и C1 control codes
 
     return true;
 }
 
-static const char *wchar_to_utf8(const wchar_t *wide_str, int length) {
+static const char* char32_to_utf8(const char32_t* wide_str, int length) {
     static thread_local std::string buffer;
     buffer.clear();
-    buffer.reserve(length);
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    buffer.reserve(length * 4); // Максимум 4 байта на символ в UTF-8
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+
     for (int i = 0; i < length; i++) {
         try {
             if (isValidChar(wide_str[i])) {
@@ -623,25 +625,28 @@ static const char *wchar_to_utf8(const wchar_t *wide_str, int length) {
             }
         }
         catch (...) {
+            // Игнорируем ошибки конвертации
         }
     }
     return buffer.c_str();
 }
 
-void Text::char_to_wchar(const char* utf8_str) {
+void Text::char_to_char32(const char* utf8_str) {
     if (!utf8_str) return;
 
     try {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        std::wstring wide_str = converter.from_bytes(utf8_str);
+        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+        std::u32string wide_str = converter.from_bytes(utf8_str);
         auto array = wide_str.c_str();
-        _length = wcslen(array);
-        wcscpy(chars, array);
-        chars[_length] = L'\0';
+        _length = wide_str.length(); // или wide_str.size()
+        std::copy(array, array + _length, chars);
+        chars[_length] = U'\0';
     }
     catch (...) {
+        _length = 0;
     }
 }
+
 
 bool Text::containsValidChars() {
     for (int i = 0; i<_length; i++) {
@@ -660,7 +665,7 @@ void Text::translateText() {
         return;
     }
 
-    auto charsArray = wchar_to_utf8(chars, _length);
+    auto charsArray = char32_to_utf8(chars, _length);
 
     if (!charsArray || strlen(charsArray) == 0){
         return;
@@ -671,7 +676,7 @@ void Text::translateText() {
     isTranslated = strcmp(charsArray, translatedCharsArray) != 0;
 
     if (isTranslated){
-        char_to_wchar(translatedCharsArray);
+        char_to_char32(translatedCharsArray);
     }
 }
 
@@ -695,13 +700,22 @@ void Text::setLength(int i) {
 }
 
 Text* Text::deleteAt(int i, int i2) {
-	wmemcpy(this->chars + i, this->chars + i + i2, this->_length - (i + i2));
-	this->_length -= i2;
+    size_t move_start = i + i2;
+    size_t move_count = this->_length - move_start;
+
+    if (move_count > 0) {
+        std::copy(
+                this->chars + move_start,
+                this->chars + move_start + move_count,
+                this->chars + i
+        );
+    }
+    this->_length -= i2;
 	this->chars[this->_length] = '\0';
 	return this;
 }
 
-wchar_t Text::charAt(int i) {
+char32_t Text::charAt(int i) {
     return this->chars[i];
 }
 
@@ -745,23 +759,38 @@ Text* Text::append(Text* t, int i) {
 
 Text* Text::append(Text* t, int i, int i2) {
 	if (i2 > 0) {
-        wmemcpy(this->chars + this->_length, t->chars + i, i2);
-		this->_length += i2;
+        std::copy(
+                t->chars + i,         // Начало источника
+                t->chars + i + i2,    // Конец источника (последний элемент + 1)
+                this->chars + this->_length // Начало назначения
+        );
+
+        this->_length += i2;
 		this->chars[this->_length] = '\0';
 	}
 	return this;
 }
 
 Text* Text::insert(char c, int i) {
-    wmemcpy(this->chars + i + 1, this->chars + i, this->_length - i);
-	this->chars[i] = c;
+    size_t shift_count = this->_length - i;
+    std::copy_backward(
+            this->chars + i,            // Начало источника
+            this->chars + i + shift_count, // Конец источника
+            this->chars + i + 1 + shift_count // Конец целевой области
+    );
+    this->chars[i] = c;
 	this->chars[++this->_length] = '\0';
 	return this;
 }
 
 Text* Text::insert(uint8_t c, int i) {
-    wmemcpy(this->chars + i + 1, this->chars + i, this->_length - i);
-	this->chars[i] = c;
+    size_t shift_count = this->_length - i;
+    std::copy_backward(
+            this->chars + i,
+            this->chars + i + shift_count,
+            this->chars + i + 1 + shift_count
+    );
+    this->chars[i] = c;
 	this->chars[++this->_length] = '\0';
 	return this;
 }
@@ -784,8 +813,11 @@ Text* Text::insert(char* c, int i) {
 }
 
 Text* Text::insert(char* c, int i, int i2, int i3) {
-    wmemcpy(this->chars + i3 + i2, this->chars + i3, this->_length - i3);
-	this->_length += i2;
+    std::copy_backward(this->chars + i3,                    // откуда начинаем
+                       this->chars + this->_length,         // до куда копируем
+                       this->chars + this->_length + i2);   // конец назначения
+
+    this->_length += i2;
 	while (--i2 >= 0) {
 		this->chars[i3++] = c[i++];
 	}
@@ -901,8 +933,8 @@ int Text::wrapText(int i, int i2, char c) {
 
 int Text::wrapText(int i, int i2, int i3, char c) {
 	char wordBreaks[5];
-	char n8;
-    wchar_t * chars;
+	char32_t n8;
+    char32_t * chars;
 	bool n9;
 	int length, n4, n5, n6, n7, n10, n11, n12;
 
@@ -1044,7 +1076,7 @@ int Text::getStringWidth(int i, int i2, bool b) {
 int Text::getNumLines() {
 	int numLines = 1;
 	for (int i = 0; i < this->length(); ++i) {
-		char c = this->charAt(i);
+		auto c = this->charAt(i);
 		if (c == '\n' || c == '|') {
 			++numLines;
 		}

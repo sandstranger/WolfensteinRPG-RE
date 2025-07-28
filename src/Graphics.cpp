@@ -9,6 +9,7 @@
 #include "Canvas.h"
 #include "Text.h"
 #include "SDLGL.h"
+#include <cuchar>
 #if ANDROID
 #include <algorithm>
 #endif
@@ -478,25 +479,26 @@ void Graphics::drawBevel(int color1, int color2, int x, int y, int w, int h) {
     this->drawLine(x, y + h, x + w, y + h);
 }
 
-static bool isValidChar(wchar_t ch) {
-    if (ch == L'\0') return false;
+static bool isValidChar(char32_t ch) {
+    if (ch == U'\0') return false;
 
-    if (sizeof(wchar_t) == 2) {
-        if (ch >= 0xD800 && ch <= 0xDFFF) return false; // Суррогаты
-        if (ch > 0xFFFF) return false;
-    } else {
-        if (ch > 0x10FFFF) return false; // За пределами Unicode
-    }
+    // За пределами допустимого диапазона Unicode
+    if (ch > 0x10FFFF) return false;
 
-    if (std::iswcntrl(ch)) return false;
+    // Суррогаты недопустимы в UTF-32
+    if (ch >= 0xD800 && ch <= 0xDFFF) return false;
+
+    // Основные управляющие символы
+    if (ch < 0x20) return false;  // C0 control codes
+    if (ch >= 0x7F && ch < 0xA0) return false; // DEL и C1 control codes
 
     return true;
 }
 
-static const char* wchar_to_char_ptr(wchar_t wch) {
-    static char buffer[8]; // достаточно для любого UTF-8 символа
+static const char* char32_to_char_ptr(char32_t ch) {
+    static char buffer[5]; // 4 байта максимум для UTF-8 + 1 для null terminator
     std::mbstate_t state = std::mbstate_t();
-    size_t len = std::wcrtomb(buffer, wch, &state);
+    size_t len = std::c32rtomb(buffer, ch, &state);
     if (len != static_cast<size_t>(-1)) {
         buffer[len] = '\0';
         return buffer;
@@ -680,8 +682,8 @@ GLuint Graphics::CreateGlyphTexture(TTFFontItem *font, const char* chars, int* o
     return textureID;
 }
 
-void Graphics::renderGlyph(wchar_t c,int x, int y, int rotateMode) {
-    auto chars = wchar_to_char_ptr(c);
+void Graphics::renderGlyph(char32_t c,int x, int y, int rotateMode) {
+    auto chars = char32_to_char_ptr(c);
     auto font = CAppContainer::getInstance()->app->canvas->ttfFont;
     GlyphCacheItem* item = GlyphCache_Find(c, font);
     if (!item) {

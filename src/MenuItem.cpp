@@ -32,6 +32,10 @@ void MenuItem::WrapHelpText(Text* text) {
 	app->localization->composeTextField(this->helpField, text);
 	text->length();
 	text->wrapText(app->canvas->menuHelpMaxChars, 8, '\n');
-    text->translateText();
-	text->wrapText(app->canvas->menuHelpMaxChars, 8, '\n');
+    if (!text->isTranslated) {
+        text->translateText();
+        if (text->isTranslated) {
+            text->wrapText(app->canvas->menuHelpMaxChars, 8, '\n');
+        }
+    }
 }

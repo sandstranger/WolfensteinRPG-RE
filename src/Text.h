@@ -141,10 +141,10 @@ class Text
 {
 private:
     bool containsValidChars();
-    void char_to_wchar(const char* utf8_str);
+    void char_to_char32(const char* utf8_str);
 public:
     bool isTranslated;
-    wchar_t *chars;
+    char32_t *chars;
 	int _length;
 	int stringWidth;
 
@@ -158,7 +158,7 @@ public:
     void translateText();
     void setLength(int i);
 	Text* deleteAt(int i, int i2);
-    wchar_t charAt(int i);
+    char32_t charAt(int i);
 	void setCharAt(char c, int i);
 	Text* append(char c);
 	Text* append(uint8_t c);
