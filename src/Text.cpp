@@ -1044,6 +1044,7 @@ int Text::getStringWidth(int i, int i2, bool b) {
 	if (i >= 0 && i < i2) {
 		for (int j = i; j < i2; ++j) {
 			auto c = this->charAt(j);
+            bool useSDLTTFRenderingForChar = useSDLTTFRendering && isValidChar(c);
 			if (c == '\n' || c == '|') {
 				if (!b) {
 					break;
@@ -1054,12 +1055,12 @@ int Text::getStringWidth(int i, int i2, bool b) {
 				}
 			}
 			else if (c == ' ') {
-				n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+				n3 += useSDLTTFRenderingForChar ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			}
 			else if (c == '^' && j != i2 - 1) {
 				int16_t n4 = (int16_t)(this->charAt(++j) - '0');
 				if (n4 < 0 || n4 > 9) {
-					n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+					n3 += useSDLTTFRenderingForChar ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 					--j;
 				}
 			}
