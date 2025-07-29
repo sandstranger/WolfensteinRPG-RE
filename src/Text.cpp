@@ -1035,6 +1035,7 @@ int Text::getStringWidth(bool b) {
 
 int Text::getStringWidth(int i, int i2, bool b) {
 	Applet* app = CAppContainer::getInstance()->app;
+    bool useSDLTTFRendering = app->localization->enableSDLTTF;
 	int n2 = 0;
 	int n3 = 0;
 	if (i2 == -1 || i2 >= this->length()) {
@@ -1053,17 +1054,17 @@ int Text::getStringWidth(int i, int i2, bool b) {
 				}
 			}
 			else if (c == ' ') {
-				n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+				n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			}
 			else if (c == '^' && j != i2 - 1) {
 				int16_t n4 = (int16_t)(this->charAt(++j) - '0');
 				if (n4 < 0 || n4 > 9) {
-					n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+					n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 					--j;
 				}
 			}
 			else {
-				n3 += isTranslated ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+				n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			}
 		}
 	}
