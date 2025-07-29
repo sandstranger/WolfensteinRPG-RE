@@ -13,6 +13,7 @@ class Text;
 typedef struct TTFFontItem {
     TTF_Font* font;
     SDL_Color color;
+    SDL_Color outlineColor;
 } TTFFontItem;
 
 typedef struct GlyphCacheItem {

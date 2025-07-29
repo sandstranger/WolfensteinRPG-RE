@@ -197,15 +197,19 @@ bool Canvas::startup() {
         auto smallTTFFont = TTF_OpenFont(pathToTTFFont.c_str(), 16);
 
         SDL_Color whiteSdlColor = {255, 255, 255, 255};
+        SDL_Color lightFontOutlineColor = {69, 56, 9, 255};
         SDL_Color blackSdlColor = {0, 0, 0, 255};
+        SDL_Color darkFontOutlineColor = {128, 102, 71, 255};
 
         auto *lightSmallFontItem = (TTFFontItem*)malloc(sizeof(TTFFontItem));
         lightSmallFontItem->font = smallTTFFont;
         lightSmallFontItem->color = whiteSdlColor;
+        lightSmallFontItem->outlineColor = lightFontOutlineColor;
 
         auto *blackSmallFontItem = (TTFFontItem*)malloc(sizeof(TTFFontItem));
         blackSmallFontItem->font = smallTTFFont;
         blackSmallFontItem->color = blackSdlColor;
+        blackSmallFontItem->outlineColor = darkFontOutlineColor;
 
         ttfFonts[0] = lightSmallFontItem;
         ttfFonts[1] = blackSmallFontItem;

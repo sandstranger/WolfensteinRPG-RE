@@ -620,7 +620,7 @@ GLuint Graphics::CreateGlyphTexture(TTFFontItem *font, const char* chars, int* o
     if (!glyphSurf) return 0;
 
     *outAdvance = glyphSurf->w;
-    SDL_Surface* outlineSurf = TTF_RenderUTF8_Solid(font->font, chars, (SDL_Color){255, 0, 0, 255});
+    SDL_Surface* outlineSurf = TTF_RenderUTF8_Solid(font->font, chars, font->outlineColor);
     if (!outlineSurf) {
         SDL_FreeSurface(glyphSurf);
         return 0;
