@@ -1035,7 +1035,7 @@ int Text::getStringWidth(bool b) {
 
 int Text::getStringWidth(int i, int i2, bool b) {
 	Applet* app = CAppContainer::getInstance()->app;
-    bool useSDLTTFRendering = app->localization->enableSDLTTF;
+    bool useSDLTTFRendering = app->localization->enableSDLTTF && !app->warFontActive();
 	int n2 = 0;
 	int n3 = 0;
 	if (i2 == -1 || i2 >= this->length()) {
@@ -1045,6 +1045,7 @@ int Text::getStringWidth(int i, int i2, bool b) {
 		for (int j = i; j < i2; ++j) {
 			auto c = this->charAt(j);
             bool useSDLTTFRenderingForChar = useSDLTTFRendering && isValidChar(c);
+            auto charWidth = useSDLTTFRenderingForChar ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
 			if (c == '\n' || c == '|') {
 				if (!b) {
 					break;
@@ -1055,17 +1056,17 @@ int Text::getStringWidth(int i, int i2, bool b) {
 				}
 			}
 			else if (c == ' ') {
-				n3 += useSDLTTFRenderingForChar ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+				n3 += charWidth;
 			}
 			else if (c == '^' && j != i2 - 1) {
 				int16_t n4 = (int16_t)(this->charAt(++j) - '0');
 				if (n4 < 0 || n4 > 9) {
-					n3 += useSDLTTFRenderingForChar ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+					n3 += charWidth;
 					--j;
 				}
 			}
 			else {
-				n3 += useSDLTTFRendering ? Applet::TTF_CHAR_SPACING : Applet::CHAR_SPACING[app->fontType];
+				n3 += charWidth;
 			}
 		}
 	}
