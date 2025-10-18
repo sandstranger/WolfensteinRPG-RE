@@ -125,17 +125,17 @@ void drawView(SDLGL *sdlGL) {
 
 #ifdef ANDROID
 extern "C" {
-JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_resumeSound(JNIEnv *env, jobject thisObject) {
+JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_DoomRpgSeriesGameActivity_resumeSound(JNIEnv *env, jobject thisObject) {
     CAppContainer::getInstance()->resumeOpenAL();
 }
 
-JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_pauseSound(JNIEnv *env, jobject thisObject) {
+JNIEXPORT void JNICALL Java_com_mobilerpgpack_phone_engine_activity_DoomRpgSeriesGameActivity_pauseSound(JNIEnv *env, jobject thisObject) {
     CAppContainer::getInstance()->suspendOpenAL();
 }
 }
 
 extern "C" {
-JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_EngineActivity_needToShowScreenControls(JNIEnv *env, jobject thisObject) {
+JNIEXPORT jboolean JNICALL Java_com_mobilerpgpack_phone_engine_activity_DoomRpgSeriesGameActivity_needToShowScreenControls(JNIEnv *env, jobject thisObject) {
     CAppContainer *appContainer = CAppContainer::getInstance();
     if (appContainer == nullptr || appContainer->app == nullptr || appContainer->app->canvas == nullptr){
         return true;
