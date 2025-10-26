@@ -109,9 +109,12 @@ bool SDLGL::Initialize() {
 		this->vSync = true;
 
 #ifdef ANDROID
+        bool useLegacyOpenGLES2_0 = strcmp(getenv("LIBGL_ES"), "2") == 0;
+        SDL_Log(useLegacyOpenGLES2_0 ? "Legacy OpenGL ES 2.0 is using for rendering" :
+                "OpenGL ES 3.2 is using for rendering");
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, useLegacyOpenGLES2_0 ? 2 : 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, useLegacyOpenGLES2_0 ? 0 : 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_NO_ERROR, 1);
 #endif
 		//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
