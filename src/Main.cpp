@@ -134,7 +134,7 @@ void resumeSound() {
 
 bool needToShowScreenControls() {
     CAppContainer *appContainer = CAppContainer::getInstance();
-    if (appContainer == nullptr || appContainer->app == nullptr || appContainer->app->canvas == nullptr){
+    if (!appContainer || !appContainer->app || !appContainer->app->canvas){
         return true;
     }
     int currentCanvasState = appContainer->app->canvas->state;
