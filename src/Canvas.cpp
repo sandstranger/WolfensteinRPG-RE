@@ -42,12 +42,9 @@ constexpr char Canvas::numCharTable[10][6];
 constexpr int Canvas::ARROW_DATA[16];
 constexpr int Canvas::SELECTORPOS[18];
 constexpr int Canvas::MAG_DATA[15];
-static std::string pathToTTFFont;
 
 Canvas::Canvas() {
 	memset(this, 0, sizeof(Canvas));
-    pathToTTFFont = std::getenv("ANDROID_GAME_PATH");
-    pathToTTFFont +="/UnifontExMono.ttf";
 }
 
 Canvas::~Canvas() {
@@ -194,6 +191,9 @@ bool Canvas::startup() {
 		this->startupMap = 1;
 		this->skipIntro = false;
 		this->tellAFriend = false;
+        std::string pathToTTFFont = SDL_AndroidGetExternalStoragePath();
+        pathToTTFFont +="/UnifontExMono.ttf";
+
         auto smallTTFFont = TTF_OpenFont(pathToTTFFont.c_str(), 16);
 
         SDL_Color whiteSdlColor = {255, 255, 255, 255};
