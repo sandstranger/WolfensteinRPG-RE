@@ -34,7 +34,7 @@ int main(int argc, char* args[]) {
 #endif
 
 #ifdef ANDROID
-    chdir(getenv("ANDROID_GAME_PATH"));
+    chdir(SDL_AndroidGetExternalStoragePath());
 #endif
     int		UpTime = 0;
 
