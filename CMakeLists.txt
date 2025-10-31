@@ -13,10 +13,12 @@ if(MSVC)
 	add_definitions("/D_CRT_SECURE_NO_WARNINGS")
 endif()
 
-find_package(SDL2 REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(OpenAL REQUIRED)
-find_package(OpenGL REQUIRED)
+if (NOT ANDROID)
+	find_package(SDL2 REQUIRED)
+	find_package(ZLIB REQUIRED)
+	find_package(OpenAL REQUIRED)
+	find_package(OpenGL REQUIRED)
+endif ()
 
 # Global identifiers for each project/target
 set(HASH_LIBRARY_TGT_NAME           wolfesteinrpg-Hash-Library)

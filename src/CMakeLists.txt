@@ -35,6 +35,5 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 else ()
     add_library(${PROJECT_NAME} SHARED "${HEADER_FILES}" "${SOURCE_FILES}")
-    target_link_libraries(${PROJECT_NAME} SDL2::SDL2 ZLIB::ZLIB ${OPENGL_opengl_LIBRARY}
-            OpenAL::OpenAL ${HASH_LIBRARY_TGT_NAME} ${SDL2_TTF_LIBRARY} ${TRANSLATOR_LIBRARY} log)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${HASH_LIBRARY_TGT_NAME})
 endif ()
