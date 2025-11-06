@@ -190,7 +190,7 @@ void Localization::setLanguage(int language) {
         return;
     }
 
-    this->defaultLanguage = language <0 || language>=3 ? 0 : language;
+    this->defaultLanguage = language <0 || language>3 ? 0 : language;
 	this->beginTextLoading();
 	for (int i = 0; i < (Strings::FILE_MAX); ++i) {
 		if (this->text[i] != nullptr) {
