@@ -186,7 +186,11 @@ void Localization::unloadText(int index) {
 }
 
 void Localization::setLanguage(int language) {
-	this->defaultLanguage = language;
+    if (this->enableMachineTextTranslation){
+        return;
+    }
+
+    this->defaultLanguage = language <0 || language>=3 ? 0 : language;
 	this->beginTextLoading();
 	for (int i = 0; i < (Strings::FILE_MAX); ++i) {
 		if (this->text[i] != nullptr) {
