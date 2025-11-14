@@ -140,6 +140,10 @@ bool needToShowScreenControls() {
     int currentCanvasState = appContainer->app->canvas->state;
     return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_COMBAT;
 }
+
+bool needToInvokeMouseButtonsEvents(){
+    return true;
+}
 }
 
 #endif
