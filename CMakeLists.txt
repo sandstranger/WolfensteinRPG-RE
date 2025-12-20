@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 if (NOT ANDROID)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 else()
-	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 endif()
 
 if(MSVC)
