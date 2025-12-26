@@ -426,6 +426,7 @@ static void rescanGameControllers(int joyIdx) noexcept {
 // Most computer users would probably only want one gamepad or joystick connected at a time anyway?
 //------------------------------------------------------------------------------------------------------------------------------------------
 static void rescanGameControllers() noexcept {
+    SDL_GameControllerUpdate();
     // If we already have a gamepad or generic joystick then just re-check that it is still connected.
     // Note that we can check if a gamepad is connected by checking if the associated joystick is connected.
     if (gpJoystick) {
@@ -480,6 +481,14 @@ static void rescanGameControllers() noexcept {
         }
     }
 }
+
+#if ANDROID
+extern "C"{
+void rescanGameControllersForced() {
+    rescanGameControllers();
+}
+}
+#endif
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 // Convert an SDL axis value to a -1 to + 1 range float.
