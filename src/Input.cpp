@@ -484,7 +484,7 @@ static void rescanGameControllers() noexcept {
 
 #if ANDROID
 extern "C"{
-void rescanGameControllersForced(char *targetVirtualControllerGUID){
+void rescanGameControllersForced(){
     rescanGameControllers();
 }
 }
