@@ -807,6 +807,7 @@ void Input::handleEvents() noexcept {
                     SDL_GL_GetDrawableSize(sdlGL->window, &winVidWidth, &winVidHeight);
                     sdlGL->updateWinVid(winVidWidth, winVidHeight);
                 }
+                }
                break;
 
             case SDL_KEYDOWN: {
