@@ -92,7 +92,7 @@ bool SDLGL::Initialize() {
         SDL_SetWindowPosition(this->window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
         SDL_SetWindowBordered(this->window, SDL_FALSE);
         int winVidWidth, winVidHeight;
-        SDL_GetWindowSize(this->window, &winVidWidth, &winVidHeight);
+        SDL_GL_GetDrawableSize(this->window, &winVidWidth, &winVidHeight);
         this->updateWinVid(winVidWidth, winVidHeight);
 #else
         this->window = SDL_CreateWindow("Wolfenstein RPG By [GEC] Version 0.1", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, winVidWidth, winVidHeight, flags);
@@ -199,7 +199,7 @@ void SDLGL::Error(const char* fmt, ...)
 
 void SDLGL::transformCoord2f(float* x, float* y) {
 	int w, h;
-	SDL_GetWindowSize(this->window, &w, &h);
+	SDL_GL_GetDrawableSize(this->window, &w, &h);
 	*x *= (float)w / (float)Applet::IOS_WIDTH;
 	*y *= (float)h / (float)Applet::IOS_HEIGHT;
 }
@@ -243,7 +243,7 @@ void SDLGL::updateVideo() {
     }
 
     int winVidWidth, winVidHeight;
-    SDL_GetWindowSize(this->window, &winVidWidth, &winVidHeight);
+    SDL_GL_GetDrawableSize(this->window, &winVidWidth, &winVidHeight);
     this->updateWinVid(winVidWidth, winVidHeight);
 #endif
 }
