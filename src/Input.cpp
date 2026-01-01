@@ -1065,7 +1065,6 @@ void Input::handleEvents() noexcept {
                         int raw = keyMapping[i].keyBinds[j] & ~(IS_CONTROLLER_AXIS);
                         auto axis =static_cast<GameControllerAxis>(raw);
                         input = gamepadAxisToInput(axis);
-                        SDL_Log("INPUT VALUE = %d", input);
                     } else{
                         input = (GamepadInput)(keyMapping[i].keyBinds[j] & ~(IS_CONTROLLER_BUTTON | IS_MOUSE_BUTTON));
                     }
