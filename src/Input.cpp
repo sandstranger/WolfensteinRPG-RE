@@ -801,13 +801,13 @@ void Input::handleEvents() noexcept {
                 CAppContainer::getInstance()->app->shutdown();
             }   break;
 
-            /*case SDL_WINDOWEVENT: {
+            case SDL_WINDOWEVENT: {
                 if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED) {
                     printf("SDL_WINDOWEVENT_RESIZED\n");
-                    SDL_GetWindowSize(sdlGL->window, &winVidWidth, &winVidHeight);
+                    SDL_GL_GetDrawableSize(sdlGL->window, &winVidWidth, &winVidHeight);
                     sdlGL->updateWinVid(winVidWidth, winVidHeight);
                 }
-            }   break;*/
+               break;
 
             case SDL_KEYDOWN: {
                 const uint16_t scancode = (uint16_t)sdlEvent.key.keysym.scancode;
