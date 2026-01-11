@@ -245,9 +245,11 @@ GamepadInput sdlAxisToInput2(const GamepadInput axis, const float value) noexcep
 }
 
 #if ANDROID
+extern "C" {
 __attribute__((used)) __attribute__((visibility("default")))
-void registerForceLandscapeActivityOrientationCallback (forceLandScapeActivityOrientationDelegate instance) {
+void registerForceLandscapeActivityOrientationCallback(forceLandScapeActivityOrientationDelegate instance) {
     activityOrientationChangerInstance = instance;
+}
 }
 #endif
 
