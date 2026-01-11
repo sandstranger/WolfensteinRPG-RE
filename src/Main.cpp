@@ -142,14 +142,15 @@ void drawView(SDLGL *sdlGL) {
 
 #ifdef ANDROID
 extern "C" {
-void resumeSound() {
+__attribute__((used)) __attribute__((visibility("default")))
+void onNativeResume() {
     CAppContainer::getInstance()->resumeOpenAL();
 }
-
- void pauseSound() {
+__attribute__((used)) __attribute__((visibility("default")))
+ void onNativePause() {
     CAppContainer::getInstance()->suspendOpenAL();
 }
-
+__attribute__((used)) __attribute__((visibility("default")))
 bool needToShowScreenControls() {
     CAppContainer *appContainer = CAppContainer::getInstance();
     if (!appContainer || !appContainer->app || !appContainer->app->canvas){
@@ -159,6 +160,7 @@ bool needToShowScreenControls() {
     return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_COMBAT;
 }
 
+__attribute__((used)) __attribute__((visibility("default")))
 bool needToInvokeMouseButtonsEvents(){
     return true;
 }
