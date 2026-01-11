@@ -75,6 +75,11 @@ float   gBegMouseY;
 float   gCurMouseX;
 float   gCurMouseY;
 
+#if ANDROID
+typedef void (*forceLandScapeActivityOrientationDelegate)();
+static forceLandScapeActivityOrientationDelegate activityOrientationChangerInstance = nullptr;
+#endif
+
 keyMapping_t keyMapping[KEY_MAPPIN_MAX];
 keyMapping_t keyMappingTemp[KEY_MAPPIN_MAX];
 keyMapping_t keyMappingDefault[KEY_MAPPIN_MAX] = {
@@ -238,6 +243,13 @@ GamepadInput sdlAxisToInput2(const GamepadInput axis, const float value) noexcep
         return GamepadInput::INVALID;
     }
 }
+
+#if ANDROID
+__attribute__((used)) __attribute__((visibility("default")))
+void registerForceLandscapeActivityOrientationCallback (forceLandScapeActivityOrientationDelegate instance) {
+    activityOrientationChangerInstance = instance;
+}
+#endif
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 // Convert an SDL axis to a joy controller input enum
@@ -795,6 +807,11 @@ void Input::handleEvents() noexcept {
     int i, j;
 
     while (SDL_PollEvent(&sdlEvent) != 0) {
+#if ANDROID
+        if (sdlEvent.type == SDL_APP_DIDENTERFOREGROUND && activityOrientationChangerInstance!= nullptr){
+            activityOrientationChangerInstance();
+        }
+#endif
         switch (sdlEvent.type) {
             case SDL_QUIT: {
                 printf("handleEvents::SDL_QUIT\n");
