@@ -191,8 +191,8 @@ bool Canvas::startup() {
 		this->startupMap = 1;
 		this->skipIntro = false;
 		this->tellAFriend = false;
-        std::string pathToTTFFont = SDL_AndroidGetExternalStoragePath();
-        pathToTTFFont +="/UnifontExMono.ttf";
+        std::string pathToTTFFont = std::string (getenv("PATH_TO_USER_FOLDER")) +
+                std::string ("/UnifontExMono.ttf");
 
         auto smallTTFFont = TTF_OpenFont(pathToTTFFont.c_str(), 16);
 
