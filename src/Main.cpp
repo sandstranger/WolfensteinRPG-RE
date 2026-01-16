@@ -23,6 +23,14 @@
 #include "Input.h"
 #ifdef ANDROID
 #include <SDL_main.h>
+#include <string>
+using namespace std;
+#endif
+
+#if ANDROID
+static string g_pathToIPA;
+string g_pathToUserFolder;
+string g_pathToSDLControllerDB;
 #endif
 
 void drawView(SDLGL* sdlGL);
@@ -34,7 +42,7 @@ int main(int argc, char* args[]) {
 #endif
 
 #ifdef ANDROID
-    chdir(getenv("PATH_TO_USER_FOLDER"));
+    chdir(g_pathToUserFolder.c_str());
 #endif
     int		UpTime = 0;
 
@@ -44,7 +52,7 @@ int main(int argc, char* args[]) {
     
     ZipFile zipFile;
 #ifdef ANDROID
-    zipFile.openZipFile(getenv("PATH_TO_RESOURCES"));
+    zipFile.openZipFile(g_pathToIPA.c_str());
 #else
     zipFile.openZipFile("Wolfenstein RPG.ipa");
 #endif
@@ -169,7 +177,16 @@ __attribute__((used)) __attribute__((visibility("default")))
 bool needToReInitGameControllers (){
     return false;
 }
+__attribute__((used)) __attribute__((visibility("default")))
+void setPathsToResources (const char *pathToArchive, const char *pathToUserFolder) {
+    g_pathToUserFolder =pathToUserFolder;
+    g_pathToIPA = pathToArchive;
 }
 
+__attribute__((used)) __attribute__((visibility("default")))
+void setPathToSDLControllerDB (const char *pathToSDLControllerDB){
+    g_pathToSDLControllerDB = pathToSDLControllerDB;
+}
+}
 #endif
 

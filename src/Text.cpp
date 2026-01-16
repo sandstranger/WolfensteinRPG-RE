@@ -16,15 +16,32 @@
 #include "algorithm"
 #endif
 
+
 // --------------------
 // Localization Class
 // --------------------
 constexpr char* Localization::STRINGS_MENUS[4][49];
 
+#if ANDROID
+static bool g_enableSDLTTF = false;
+static bool g_enableMachineTranslation = false;
+
+extern "C"{
+__attribute__((used)) __attribute__((visibility("default")))
+void setEnableSDLTTFState (const bool enableSDLTTF){
+    g_enableSDLTTF = enableSDLTTF;
+}
+__attribute__((used)) __attribute__((visibility("default")))
+void setEnableMachineTranslationState (const bool enableMachineTranslation){
+    g_enableMachineTranslation = enableMachineTranslation;
+}
+}
+#endif
+
 Localization::Localization() {
 	memset(this, 0, sizeof(Localization));
-    enableMachineTextTranslation = strcmp(getenv("ENABLE_TEXTS_MACHINE_TRANSLATION"), "true") == 0;
-    enableSDLTTF = strcmp(getenv("ENABLE_SDL_TTF"), "true") == 0 || enableMachineTextTranslation;
+    enableMachineTextTranslation = g_enableMachineTranslation;
+    enableSDLTTF = g_enableSDLTTF || enableMachineTextTranslation;
 }
 
 Localization::~Localization() {
