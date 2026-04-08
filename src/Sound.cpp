@@ -15,6 +15,7 @@
 #include "Sound.h"
 #include "Sounds.h"
 #include "JavaStream.h"
+#include <AL/alext.h>
 
 constexpr char* Sounds::RESOURCE_FILE_NAMES[];
 
@@ -119,10 +120,14 @@ void Sound::openAL_Close() {
 }
 
 void Sound::openAL_SetSystemVolume(int volume) {
-	if (volume > 100) {
-		volume = 100;
+	if (alDevice == nullptr){
+		return;
 	}
-	alListenerf(AL_GAIN, (float)volume / 100.0f);
+	if (volume == 0){
+		alcDevicePauseSOFT(alDevice);
+	} else{
+		alcDeviceResumeSOFT(alDevice);
+	}
 }
 
 void Sound::openAL_SetVolume(ALuint source, int volume) {

@@ -9,6 +9,8 @@ else()
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 endif()
 
+add_definitions(-DAL_ALEXT_PROTOTYPES)
+
 if(MSVC)
 	add_definitions("/D_CRT_SECURE_NO_WARNINGS")
 endif()
