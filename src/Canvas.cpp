@@ -6788,6 +6788,7 @@ void Canvas::touchEndUnhighlight() {
 	}
 }
 
+
 int Canvas::touchToKey_Play(int pressX, int pressY) {
 	Applet* app = CAppContainer::getInstance()->app;
 	int result;
@@ -6822,7 +6823,7 @@ int Canvas::touchToKey_Play(int pressX, int pressY) {
 	if (this->isZoomedIn) {
 		return this->m_sniperScopeButtons->GetTouchedButtonID(pressX, pressY);
 	}
-	if (this->m_controlButtonIsTouched) {
+	if (this->m_controlButtonIsTouched && this->state != Canvas::ST_DRIVING) {
 		return -1;
 	}
 
