@@ -1,5 +1,10 @@
 #include "SDL_ttf.h"
+
+#if !defined(ANDROID)
 #include <SDL_opengl.h>
+#else
+#include "SDLGL.h"
+#endif
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__

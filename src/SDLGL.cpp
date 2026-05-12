@@ -81,9 +81,6 @@ bool SDLGL::Initialize() {
 		// Set the highdpi flags - this makes a big difference on Macs with
 		// retina displays, especially when using small window sizes.
 		flags |= SDL_WINDOW_ALLOW_HIGHDPI;
-#ifdef ANDROID
-        flags |= SDL_WINDOW_RESIZABLE;
-#endif
 		this->oldResolutionIndex = -1;
 		this->resolutionIndex = 0;
 		this->winVidWidth = sdlResVideoModes[this->resolutionIndex].width;//Applet::IOS_WIDTH*2;
@@ -143,6 +140,14 @@ bool SDLGL::Initialize() {
 
 		this->glcontext = SDL_GL_CreateContext(window);
 
+#if ANDROID
+		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+			SDL_GL_DeleteContext(this->glcontext);
+			SDL_DestroyWindow(window);
+			SDL_Quit();
+			return false;
+		}
+#endif
 		// now you can make GL calls.
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);

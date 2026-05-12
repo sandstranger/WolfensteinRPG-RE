@@ -2,10 +2,13 @@
 #define __SDLGL_H__
 
 #include <SDL.h>
+#include <SDL_gamecontroller.h>
+#if defined(ANDROID)
+#include <glad.h>
+#else
 #include <SDL_opengl.h>
 #include <SDL_opengles2.h>
-#include <SDL_gamecontroller.h>
-#include <GL/gl.h>
+#endif
 
 typedef struct SDLResVidModes_s {
 	int width, height;

@@ -1,7 +1,11 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
+#if !defined(ANDROID)
 #include <SDL_opengl.h>
+#else
+#include "SDLGL.h"
+#endif
 
 class IDIB;
 
