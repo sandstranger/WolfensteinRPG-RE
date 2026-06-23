@@ -5,6 +5,7 @@
 #include "App.h"
 #if ANDROID
 #include "AngleShaderCache.h"
+#include "SwappyController.h"
 
 static bool g_useGLES2_0 = false;
 #endif
@@ -155,8 +156,13 @@ bool SDLGL::Initialize() {
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+#ifdef ANDROID
+		if (!SwappySwapBuffers()){
+			SDL_GL_SwapWindow(this->window);
+		}
+#else
 		SDL_GL_SwapWindow(this->window);
-
+#endif
 #ifdef _WIN32
 		// Check for joysticks
 		SDL_SetHint(SDL_HINT_JOYSTICK_RAWINPUT, "0");
