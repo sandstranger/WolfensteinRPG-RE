@@ -822,7 +822,7 @@ void Input::handleEvents() noexcept {
             }   break;
 
             case SDL_WINDOWEVENT: {
-                if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED) {
+                if (sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                     printf("SDL_WINDOWEVENT_RESIZED\n");
                     SDL_GL_GetDrawableSize(sdlGL->window, &winVidWidth, &winVidHeight);
                     sdlGL->updateWinVid(winVidWidth, winVidHeight);

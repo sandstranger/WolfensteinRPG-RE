@@ -160,11 +160,9 @@ void drawView(SDLGL *sdlGL) {
 extern "C" {
 __attribute__((used)) __attribute__((visibility("default")))
 void onNativeResume() {
-    CAppContainer::getInstance()->resumeOpenAL();
 }
 __attribute__((used)) __attribute__((visibility("default")))
  void onNativePause() {
-    CAppContainer::getInstance()->suspendOpenAL();
 }
 __attribute__((used)) __attribute__((visibility("default")))
 bool needToShowScreenControls() {
