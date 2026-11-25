@@ -37,6 +37,7 @@ public:
 	SDLGL();
 	// Destructor
 	~SDLGL();
+	void shutdown();	// once, however often it is called (the destructor, CAppContainer, Error)
 	bool Initialize();
 	void Error(const char* fmt, ...);
 

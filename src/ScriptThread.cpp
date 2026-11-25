@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -460,7 +461,7 @@ uint32_t ScriptThread::run() {
                 Entity* entity = app->game->entityDb[srcX + (32 * srcY)];
                 if (entity != nullptr) {
                     while (entity != nullptr) {
-                        if (!(1 << entity->def->eType & Enums::CONTENTS_ISEMPTY_SCRIPT)) {
+                        if (!(bit32(entity->def->eType) & Enums::CONTENTS_ISEMPTY_SCRIPT)) {
                             n26 = 0;
                             break;
                         }
@@ -1187,10 +1188,10 @@ uint32_t ScriptThread::run() {
                 int n76 = n73 & ~Enums::UNMARKTILE;
                 if ((n76 & Enums::MARKTILE_MONSTER_CLIP) != 0x0) {
                     if (b8) {
-                        app->game->baseVisitedTiles[n75] &= ~(1 << n74);
+                        app->game->baseVisitedTiles[n75] &= ~(bit32(n74));
                     }
                     else {
-                        app->game->baseVisitedTiles[n75] |= 1 << n74;
+                        app->game->baseVisitedTiles[n75] |= bit32(n74);
                     }
                 }
                 int n79 = (n76 & ~Enums::MARKTILE_MONSTER_CLIP) >> 8;
@@ -1474,7 +1475,7 @@ uint32_t ScriptThread::run() {
             case Enums::EV_DISABLED_WEAPONS: {
                 //printf("EV_DISABLED_WEAPONS -> %d\n", this->IP);
                 this->app->player->disabledWeapons = this->getShortArg();
-                if ((this->app->player->disabledWeapons & (1 << this->app->player->ce->weapon)) != 0x0) {
+                if ((this->app->player->disabledWeapons & (bit32(this->app->player->ce->weapon))) != 0x0) {
                     this->app->player->selectNextWeapon();
                     break;
                 }
@@ -1917,7 +1918,7 @@ void ScriptThread::composeLootDialog() {
                         break;
                     }
                     case Enums::IT_AMMO: {
-                        if (this->app->game->difficulty != 4 || (1 << n5 & 0x112) != 0x0) {
+                        if (this->app->game->difficulty != 4 || (bit32(n5) & 0x112) != 0x0) {
                             this->app->player->give(Enums::IT_AMMO, n5, n6, false);
                             EntityDef* find = this->app->entityDefManager->find(Enums::ET_ITEM, n3, n5);
                             this->app->localization->addTextArg(n6);
@@ -2010,7 +2011,7 @@ void ScriptThread::restoreInventory() {
         this->app->player->give(Enums::IT_AMMO, j, this->app->player->ammoCopy[j], true);
     }
     for (int k = 1; k < 17; ++k) {
-        if ((1 << k & this->app->player->weaponsCopy) != 0x0) {
+        if ((bit32(k) & this->app->player->weaponsCopy) != 0x0) {
             this->app->player->give(Enums::IT_WEAPON, k, 1, true);
         }
     }

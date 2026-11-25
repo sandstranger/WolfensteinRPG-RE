@@ -1,3 +1,4 @@
+#include "Bits.h"
 #ifndef __CARDGAMES_H__
 #define __CARDGAMES_H__
 
@@ -107,8 +108,8 @@ public:
 	static constexpr int WAR_RESOLVEFINAL = 10;
 	static constexpr int WAR_MESSAGE = 11;
 
-	static constexpr int PLAYER_TURN = ((1 << WAR_BET) | (1 << WAR_PLAYERCHOOSE) | (1 << WAR_PLAYERDISCARD)); // 137
-	static constexpr int DEALER_TURN = ((1 << WAR_DEALERCHOOSE) | (1 << WAR_DEALERDISCARD)); // 272
+	static constexpr int PLAYER_TURN = ((bit32(WAR_BET)) | (bit32(WAR_PLAYERCHOOSE)) | (bit32(WAR_PLAYERDISCARD))); // 137
+	static constexpr int DEALER_TURN = ((bit32(WAR_DEALERCHOOSE)) | (bit32(WAR_DEALERDISCARD))); // 272
 	static constexpr int DEALER_MOVE_TIMEOUT = 750;
 
 	int touchMe;

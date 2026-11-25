@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 #include <climits>
 
@@ -477,7 +478,7 @@ int Combat::playerSeq() {
         if (this->attackerWeaponId == Enums::WP_DYNAMITE && !(this->crFlags & Enums::CR_BOMB_STUCK)) {
             int dist = this->curTarget->distFrom(app->canvas->viewX, app->canvas->viewY);
             Entity* curTarget2 = this->curTarget;
-            if (WorldDistToTileDist(dist) < 1 && (1 << this->targetType & Enums::CONTENTS_DYNAMITE_SOLID)) {
+            if (WorldDistToTileDist(dist) < 1 && (bit32(this->targetType) & Enums::CONTENTS_DYNAMITE_SOLID)) {
                 if (this->targetType == Enums::ET_WORLD) {
                     this->currentBombIndex = app->game->setDynamite(app->game->traceCollisionX, app->game->traceCollisionY, false);
                 }
@@ -546,7 +547,7 @@ int Combat::playerSeq() {
                 this->curTarget->died(true, app->player->getPlayerEnt());
                 this->targetKilled = true;
             }
-            else if (--this->animLoopCount > 0 && (1 << this->targetType & n6) == 0x0 && !this->punchMissed && (this->targetType != Enums::ET_ATTACK_INTERACTIVE || this->targetSubType == Enums::INTERACT_PAINTING || this->targetSubType == Enums::INTERACT_SINK)) {
+            else if (--this->animLoopCount > 0 && (bit32(this->targetType) & n6) == 0x0 && !this->punchMissed && (this->targetType != Enums::ET_ATTACK_INTERACTIVE || this->targetSubType == Enums::INTERACT_PAINTING || this->targetSubType == Enums::INTERACT_SINK)) {
                 this->stage = 0;
                 this->animEndTime = (this->animTime = 0);
                 this->nextStageTime = 0;
@@ -886,7 +887,7 @@ void Combat::drawWeapon(int sx, int sy) {
     int wpX = wpIdleX;
     int wpY = wpIdleY;
     int gameTime = app->gameTime;
-    int n14 = 1 << weapon;
+    int n14 = bit32(weapon);
     if (Entity::CheckWeaponMask(weapon, Enums::WP_PUNCH_MASK) && (this->punchingMonster == 2 || this->punchingMonster == 3)) {
         b = true;
     }
@@ -1186,7 +1187,7 @@ int Combat::calcHit(Entity* entity) {
     if (entity->def->eType != Enums::ET_ATTACK_INTERACTIVE) {
         return 1;
     }
-    if ((this->tableCombatMasks[entity->def->parm] & 1 << app->player->ce->weapon) != 0x0) {
+    if ((this->tableCombatMasks[entity->def->parm] & bit32(app->player->ce->weapon)) != 0x0) {
         return 1;
     }
     return 0;
@@ -1826,7 +1827,7 @@ void Combat::updateProjectile() {
                     }
                 }
 
-                if (this->curAttacker != nullptr && (1 << app->hud->damageDir & 0x1C) == 0x0 && !b) {
+                if (this->curAttacker != nullptr && (bit32(app->hud->damageDir) & 0x1C) == 0x0 && !b) {
                     this->missileAnim = 0;
                 }
 

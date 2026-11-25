@@ -21,6 +21,7 @@ public:
 	IDIB();
 	// Destructor
 	~IDIB();
+	static void dispose(IDIB* dib);	// its buffers and itself (malloc'd): dib can be null
 };
 
 #endif

@@ -6,7 +6,7 @@ IDIB::IDIB() {
 }
 
 IDIB::~IDIB() {
-    if (this) {
+	// (its if (this) went: this is never null, and optimisation removed the check)
         if (this->pBmp) {
             free(this->pBmp);
             this->pBmp = nullptr;
@@ -19,5 +19,12 @@ IDIB::~IDIB() {
             free(this->pRGB565);
             this->pRGB565 = nullptr;
         }
-    }
+}
+
+void IDIB::dispose(IDIB* dib) {
+	if (!dib) {
+		return;
+	}
+	dib->~IDIB();
+	std::free(dib);
 }

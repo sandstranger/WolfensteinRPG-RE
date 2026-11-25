@@ -5,6 +5,7 @@
 //
 
 #include "md5.h"
+#include <cstring>	// memcpy (glibc's headers don't bring it in otherwise)
 
 // PsyDoom: disabling this as it is causing build errors on MacOS and doesn't seem needed?
 #if 0

@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -247,7 +248,7 @@ void ParticleSystem::spawnMonsterBlood(Entity* entity, bool b) {
         z -= 26;
     }
 
-    if (b && (ParticleSystem::GIB_BONE_MASK & 1 << entity->def->eSubType) != 0x0) {
+    if (b && (ParticleSystem::GIB_BONE_MASK & bit32(entity->def->eSubType)) != 0x0) {
         this->spawnParticles(4, color, app->render->mapSprites[app->render->S_X + sprite], app->render->mapSprites[app->render->S_Y + sprite], app->render->mapSprites[app->render->S_Z + sprite] + z);
     }
     else {

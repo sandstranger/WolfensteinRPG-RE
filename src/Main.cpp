@@ -96,13 +96,12 @@ int main(int argc, char* args[]) {
     }
 
     printf("APP_QUIT\n");
-    CAppContainer::getInstance()->~CAppContainer();
+    CAppContainer::getInstance()->shutdown();
     zipFile.closeZipFile();
-    sdlGL.~SDLGL();
+    sdlGL.shutdown();
 #ifdef ANDROID
     DestroySwappy();
 #endif
-    input.~Input();
 	return 0;
 }
 

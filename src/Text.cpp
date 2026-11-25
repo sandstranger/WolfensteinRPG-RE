@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -22,10 +23,10 @@
 // --------------------
 constexpr char* Localization::STRINGS_MENUS[4][49];
 
-#if ANDROID
-static bool g_enableSDLTTF = false;
+static bool g_enableSDLTTF = false;	// (read on every platform, set from android's side)
 static bool g_enableMachineTranslation = false;
 
+#if ANDROID
 extern "C"{
 __attribute__((used)) __attribute__((visibility("default")))
 void setEnableSDLTTFState (const bool enableSDLTTF){
@@ -155,8 +156,8 @@ char Localization::toUpper(char c) {
 
 Text* Localization::getSmallBuffer() {
 	for (int i = (Localization::MAXBUFFERS-1); i >= 0; --i) {
-		if ((this->bufferFlags & 1 << i) == 0x0) {
-			this->bufferFlags |= 1 << i;
+		if ((this->bufferFlags & bit32(i)) == 0x0) {
+			this->bufferFlags |= bit32(i);
 			return this->scratchBuffers[i];
 		}
 	}
@@ -170,8 +171,8 @@ Text* Localization::getFatalErrorBuffer() {
 
 Text* Localization::getLargeBuffer() {
 	for (int i = 0; i < (Localization::MAXBUFFERS); ++i) {
-		if ((this->bufferFlags & 1 << i) == 0x0) {
-			this->bufferFlags |= 1 << i;
+		if ((this->bufferFlags & bit32(i)) == 0x0) {
+			this->bufferFlags |= bit32(i);
 			return this->scratchBuffers[i];
 		}
 	}
@@ -192,12 +193,12 @@ void Localization::allocateText(int index) {
 
 void Localization::unloadText(int index) {
 	if (this->text[index]) {
-		delete this->text[index];
+		delete[] this->text[index];
 		this->text[index] = nullptr;
 	}
 
 	if (this->textMap[index]) {
-		delete this->textMap[index];
+		delete[] this->textMap[index];
 		this->textMap[index] = nullptr;
 	}
 }
@@ -233,9 +234,8 @@ void Localization::finishTextLoading() {
 	}
 	this->textIndex = nullptr;
 
-	this->textChunkStream->close();
-	if (this->textChunkStream != nullptr) {
-		this->textChunkStream->~InputStream();
+	if (this->textChunkStream != nullptr) {	// (it closed it before this check, and destroyed it twice: by hand, then by delete)
+		this->textChunkStream->close();
 		delete this->textChunkStream;
 	}
 	this->textChunkStream = nullptr;
@@ -1141,7 +1141,7 @@ void Text::dispose() {
 
 	for (int i = 0; i < 7; ++i) {
 		if (loc->scratchBuffers[i] == this) {
-			loc->bufferFlags &= ~(1 << i);
+			loc->bufferFlags &= ~(bit32(i));
 			this->setLength(0);
 			return;
 		}

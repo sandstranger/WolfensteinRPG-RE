@@ -2,6 +2,7 @@
 #define __ENTITYMONSTER_H__
 
 #include "CombatEntity.h"
+#include "Bits.h"
 class OutputStream;
 class InputStream;
 class CombatEntity;
@@ -55,7 +56,7 @@ public:
 	 static constexpr int MFX_FIRE_REMOVE   = ~((MFX_TURN_MASK << MFX_FIRE_SHIFT)   | MFX_FIRE);	// -6153
 	 static constexpr int MFX_SHIELD_REMOVE = ~((MFX_TURN_MASK << MFX_SHIELD_SHIFT) | MFX_SHIELD);	// -24593
 	 static constexpr int MFX_REMOVE_TURNS  = ~((MFX_TURN_MASK << MFX_POISON_SHIFT) | (MFX_TURN_MASK << MFX_FREEZE_SHIFT) | (MFX_TURN_MASK << MFX_RAISE_SHIFT) | (MFX_TURN_MASK << MFX_FIRE_SHIFT) | (MFX_TURN_MASK << MFX_SHIELD_SHIFT));	// -32737
-	 static constexpr int MFX_ALL_ONE_TURNS = ((1 << MFX_POISON_SHIFT) | (1 << MFX_FREEZE_SHIFT) | (1 << MFX_FIRE_SHIFT) | (1 << MFX_SHIELD_SHIFT) /*| (1 << MFX_RAISE_SHIFT)*/); // 10400
+	 static constexpr int MFX_ALL_ONE_TURNS = ((bit32(MFX_POISON_SHIFT)) | (bit32(MFX_FREEZE_SHIFT)) | (bit32(MFX_FIRE_SHIFT)) | (bit32(MFX_SHIELD_SHIFT)) /*| (bit32(MFX_RAISE_SHIFT))*/); // 10400
 
 	int touchMe;
 	CombatEntity ce;

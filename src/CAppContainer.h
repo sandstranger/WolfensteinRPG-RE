@@ -22,6 +22,7 @@ public:
 	CAppContainer();
 	// Destructor
 	~CAppContainer();
+	void shutdown();	// once: main's end, Error and the exit-time destructor all reach it
 
 	short* GetBackBuffer();
 	void DoLoop(int time);

@@ -22,18 +22,24 @@ CAppContainer::CAppContainer() {
 }
 
 CAppContainer::~CAppContainer() {
+	this->shutdown();
+}
+
+// (it was called as getInstance()->~CAppContainer(), and the global destroyed again at exit)
+void CAppContainer::shutdown() {
 
 	if (this->app) {
 
 		if (this->app->sound) {
-			this->app->sound->~Sound();
+			delete this->app->sound;	// (new'd: its destructor alone left the object)
+			this->app->sound = nullptr;
 		}
 		delete this->app;
 		this->app = nullptr;
 	}
 
 	if (this->sdlGL) {
-		this->sdlGL->~SDLGL();
+		this->sdlGL->shutdown();	// (main's own object: destroyed there)
 		this->sdlGL = nullptr;
 	}
 
@@ -61,13 +67,13 @@ void CAppContainer::DoLoop(int time) {
 }
 
 void CAppContainer::suspendOpenAL() const {
-    if (this && this->app){
+    if (this->app && this->app->sound){
         this->app->sound->openAL_SetSystemVolume(0);
     }
 }
 
 void CAppContainer::resumeOpenAL() const {
-    if (this && this->app){
+    if (this->app && this->app->sound){
         this->app->sound->openAL_SetSystemVolume(100);
     }
 }

@@ -216,7 +216,7 @@ int* Resource::loadFileIndex(char* fileName) {
     }*/
 
     IS.close();
-    IS.~InputStream();
+    IS.dispose();
     return array;
 }
 
@@ -234,7 +234,7 @@ void Resource::initTableLoading() {
         //printf("this->tableOffsets[%d] %d\n", i, this->tableOffsets[i]);
     }
     IS.close();
-    IS.~InputStream();
+    IS.dispose();
 }
 
 void Resource::beginTableLoading() {

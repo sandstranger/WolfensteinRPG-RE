@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -293,8 +294,8 @@ void CardGames::dealFullDeck() {
     for (int i = 0; i < this->NUM_CARDS_W; ++i) {
         for (int j = 0; j < this->NUM_CARDS_H; ++j) {
             int n;
-            for (n = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(1 << n) & this->deckMask) != 0x0LL; n = (n + 1) % CardGames::NUM_POKER_CARDS) {}
-            this->deckMask |= 1 << n; 
+            for (n = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(bit32(n)) & this->deckMask) != 0x0LL; n = (n + 1) % CardGames::NUM_POKER_CARDS) {}
+            this->deckMask |= bit32(n); 
             this->dealCard(n, this->xMin + this->xMaxW, app->canvas->screenRect[3], this->CARDS_X + (CardGames::CARD_W + 3) * i, this->CARDS_Y + (CardGames::CARD_H + 3) * j, CardGames::CARD_EXLERP, CardGames::DEF_SPEED);
         }
     }
@@ -310,8 +311,8 @@ void CardGames::dealWarHand() {
     int n = this->CARDS_Y + (CardGames::CARD_H + 3);
     for (int i = 0; i < CardGames::NUM_WAR_CARDS; ++i) {
         int n2;
-        for (n2 = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(1 << n2) & this->deckMask) != 0x0LL; n2 = (n2 + 1) % CardGames::NUM_POKER_CARDS) {}
-        this->deckMask |= 1 << n2;
+        for (n2 = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(bit32(n2)) & this->deckMask) != 0x0LL; n2 = (n2 + 1) % CardGames::NUM_POKER_CARDS) {}
+        this->deckMask |= bit32(n2);
         this->dealCard(n2, this->xMin + this->xMaxW, app->canvas->screenRect[3], this->WAR_CARDS_X + (CardGames::CARD_W + 3) * i, n, CardGames::CARD_EXLERP, CardGames::DEF_SPEED);
     }
     this->stateVars[CardGames::CARD_SEL_IDX] = 3;
@@ -322,9 +323,9 @@ void CardGames::dealWarHand() {
 void CardGames::reDealCard(int field, int flags, int n3) {
     Applet* app = CAppContainer::getInstance()->app;
     int* cardsInPlay = this->cardsInPlay;
-    this->deckMask &= ~(1 << cardsInPlay[field + CardGames::CARD_DESC]);
+    this->deckMask &= ~(bit32(cardsInPlay[field + CardGames::CARD_DESC]));
     int n4;
-    for (n4 = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(1 << n4) & this->deckMask) != 0x0LL; n4 = (n4 + 1) % CardGames::NUM_POKER_CARDS) {}
+    for (n4 = app->nextInt() % CardGames::NUM_POKER_CARDS; ((long)(bit32(n4)) & this->deckMask) != 0x0LL; n4 = (n4 + 1) % CardGames::NUM_POKER_CARDS) {}
     cardsInPlay[field + CardGames::CARD_DESC] = n4;
     cardsInPlay[field + CardGames::CARD_FLAGS] = flags;
     if (flags & CardGames::CARD_LERPING) {
@@ -383,10 +384,10 @@ void CardGames::drawCardHud(Graphics* graphics) {
                 graphics->drawRegion(this->imgOtherImgs, (CardGames::PORTRAIT_WH * 2), 0, CardGames::PORTRAIT_WH, CardGames::PORTRAIT_WH, this->GuntherPortX, this->PORTRAIT_Y, 0, 0, 0);
             }
         }
-        else if ((1 << n & CardGames::PLAYER_TURN) != 0x0) {
+        else if ((bit32(n) & CardGames::PLAYER_TURN) != 0x0) {
             graphics->drawRegion(this->imgOtherImgs, (CardGames::PORTRAIT_WH * 2), 0, CardGames::PORTRAIT_WH, CardGames::PORTRAIT_WH, this->BJPortX, this->PORTRAIT_Y, 0, 0, 0);
         }
-        else if ((1 << n & CardGames::DEALER_TURN) != 0x0) {
+        else if ((bit32(n) & CardGames::DEALER_TURN) != 0x0) {
             graphics->drawRegion(this->imgOtherImgs, (CardGames::PORTRAIT_WH * 2), 0, CardGames::PORTRAIT_WH, CardGames::PORTRAIT_WH, this->GuntherPortX, this->PORTRAIT_Y, 0, 0, 0);
         }
     }
@@ -580,7 +581,7 @@ void CardGames::drawParticles(Graphics* graphics) {
             if (this->particles[filed + CardGames::PART_VX] > 0) {
                 n4 = (n4 + 2 & 0x3);
             }
-            this->drawCard(graphics, this->particles[filed + CardGames::PART_X], this->particles[filed + CardGames::PART_Y], 0, 1 << n4);
+            this->drawCard(graphics, this->particles[filed + CardGames::PART_X], this->particles[filed + CardGames::PART_Y], 0, bit32(n4));
             ++this->numParticles;
         }
     }
@@ -1324,39 +1325,39 @@ void CardGames::explodeCards() {
 
 void CardGames::shutdown() {
     if (this->imgOtherImgs != nullptr) {
-        this->imgOtherImgs->~Image();
+        Image::dispose(this->imgOtherImgs);
     }
     this->imgOtherImgs = nullptr;
     if (this->imgTable != nullptr) {
-        this->imgTable->~Image();
+        Image::dispose(this->imgTable);
     }
     this->imgTable = nullptr;
     if (this->flakImg != nullptr) {
-        this->flakImg->~Image();
+        Image::dispose(this->flakImg);
     }
     this->flakImg = nullptr;
     if (this->imgUpPointerNormal != nullptr) {
-        this->imgUpPointerNormal->~Image();
+        Image::dispose(this->imgUpPointerNormal);
     }
     this->imgUpPointerNormal = nullptr;
     if (this->imgUpPointerPressed != nullptr) {
-        this->imgUpPointerPressed->~Image();
+        Image::dispose(this->imgUpPointerPressed);
     }
     this->imgUpPointerPressed = nullptr;
     if (this->imgDownPointerNormal != nullptr) {
-        this->imgDownPointerNormal->~Image();
+        Image::dispose(this->imgDownPointerNormal);
     }
     this->imgDownPointerNormal = nullptr;
     if (this->imgDownPointerPressed != nullptr) {
-        this->imgDownPointerPressed->~Image();
+        Image::dispose(this->imgDownPointerPressed);
     }
     this->imgDownPointerPressed = nullptr;
     if (this->imgSwitchUp!= nullptr) {
-        this->imgSwitchUp->~Image();
+        Image::dispose(this->imgSwitchUp);
     }
     this->imgSwitchUp = nullptr;
     if (this->imgSwitchDown!= nullptr){
-        this->imgSwitchDown->~Image();
+        Image::dispose(this->imgSwitchDown);
     }
     this->imgSwitchDown = nullptr;
 

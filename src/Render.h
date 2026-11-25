@@ -257,6 +257,7 @@ public:
 	int delayedSpriteBuffer[3];
 	uint8_t* skyMapTexels;
 	uint16_t** skyMapPalette;
+	int skyMapPaletteLength;	// each of skyMapPalette's, in colours
 	bool isSkyMap;
 	int skyMapX;
 	int skyMapY;

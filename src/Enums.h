@@ -2,6 +2,7 @@
 #define __ENUMS_H__
 
 #include <stdexcept>
+#include "Bits.h"
 
 class Enums
 {
@@ -25,19 +26,19 @@ public:
     static constexpr int ET_MAX = 15;                       // 32768
 
     static constexpr int CONTENTS_ANY = -1;
-    static constexpr int CONTENTS_PICKUP = (1 << ET_ITEM); // 64
-    static constexpr int CONTENTS_INTERACTIVE = (1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_DOOR | 1 << ET_ATTACK_INTERACTIVE); // 1068
-    static constexpr int CONTENTS_PLAYERSOLID = (1 << ET_WORLD | 1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_PLAYERCLIP | 1 << ET_DOOR | 1 << ET_DECOR | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL); // 13501
-    static constexpr int CONTENTS_MONSTERSOLID = (1 << ET_WORLD | 1 << ET_PLAYER | 1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_DOOR | 1 << ET_DECOR | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_MONSTERBLOCK_ITEM | 1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL); // 15535
-    static constexpr int CONTENTS_WEAPONSOLID = (1 << ET_WORLD | 1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_DOOR | 1 << ET_DECOR | 1 << ET_CORPSE | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL);  // 13997
-    static constexpr int CONTENTS_VIEWSOLID = (1 << ET_WORLD | 1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_DOOR | 1 << ET_DECOR | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_SPRITEWALL);  // 5293
-    static constexpr int CONTENTS_MONSTERWPSOLID = (1 << ET_WORLD | 1 << ET_PLAYER | 1 << ET_MONSTER | 1 << ET_NPC | 1 << ET_DOOR | 1 << ET_DECOR | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_SPRITEWALL);  // 5295
-    static constexpr int CONTENTS_WORLD = (1 << ET_WORLD); // 1
-    static constexpr int CONTENTS_SPRITEWALL = (1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL); // 12288
-    static constexpr int CONTENTS_NOFLOAT = (1 << ET_NPC | 1 << ET_DECOR | 1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL); // 12424
-    static constexpr int CONTENTS_DYNAMITE_SOLID = (1 << ET_WORLD | 1 << ET_MONSTER | 1 << ET_DOOR | 1 << ET_ATTACK_INTERACTIVE | 1 << ET_SPRITEWALL | 1 << ET_NONOBSTRUCTING_SPRITEWALL); // 13349
-    static constexpr int CONTENTS_ISEMPTY_SCRIPT = (1 << ET_ITEM | 1 << ET_CORPSE | 1 << ET_NONOBSTRUCTING_SPRITEWALL | 1 << ET_DECOR_NOCLIP); // 25152
-    static constexpr int CONTENTS_SPLASH_SOLID = (1 << ET_WORLD | 1 << ET_DOOR | 1 << ET_SPRITEWALL); // 4129
+    static constexpr int CONTENTS_PICKUP = (bit32(ET_ITEM)); // 64
+    static constexpr int CONTENTS_INTERACTIVE = (bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_DOOR) | bit32(ET_ATTACK_INTERACTIVE)); // 1068
+    static constexpr int CONTENTS_PLAYERSOLID = (bit32(ET_WORLD) | bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_PLAYERCLIP) | bit32(ET_DOOR) | bit32(ET_DECOR) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL)); // 13501
+    static constexpr int CONTENTS_MONSTERSOLID = (bit32(ET_WORLD) | bit32(ET_PLAYER) | bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_DOOR) | bit32(ET_DECOR) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_MONSTERBLOCK_ITEM) | bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL)); // 15535
+    static constexpr int CONTENTS_WEAPONSOLID = (bit32(ET_WORLD) | bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_DOOR) | bit32(ET_DECOR) | bit32(ET_CORPSE) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL));  // 13997
+    static constexpr int CONTENTS_VIEWSOLID = (bit32(ET_WORLD) | bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_DOOR) | bit32(ET_DECOR) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_SPRITEWALL));  // 5293
+    static constexpr int CONTENTS_MONSTERWPSOLID = (bit32(ET_WORLD) | bit32(ET_PLAYER) | bit32(ET_MONSTER) | bit32(ET_NPC) | bit32(ET_DOOR) | bit32(ET_DECOR) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_SPRITEWALL));  // 5295
+    static constexpr int CONTENTS_WORLD = (bit32(ET_WORLD)); // 1
+    static constexpr int CONTENTS_SPRITEWALL = (bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL)); // 12288
+    static constexpr int CONTENTS_NOFLOAT = (bit32(ET_NPC) | bit32(ET_DECOR) | bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL)); // 12424
+    static constexpr int CONTENTS_DYNAMITE_SOLID = (bit32(ET_WORLD) | bit32(ET_MONSTER) | bit32(ET_DOOR) | bit32(ET_ATTACK_INTERACTIVE) | bit32(ET_SPRITEWALL) | bit32(ET_NONOBSTRUCTING_SPRITEWALL)); // 13349
+    static constexpr int CONTENTS_ISEMPTY_SCRIPT = (bit32(ET_ITEM) | bit32(ET_CORPSE) | bit32(ET_NONOBSTRUCTING_SPRITEWALL) | bit32(ET_DECOR_NOCLIP)); // 25152
+    static constexpr int CONTENTS_SPLASH_SOLID = (bit32(ET_WORLD) | bit32(ET_DOOR) | bit32(ET_SPRITEWALL)); // 4129
     
     static constexpr int ENV_DAMAGE_SPIKES = 0;
     static constexpr int ENV_DAMAGE_FIRE = 1;
@@ -63,8 +64,8 @@ public:
     static constexpr int INTERACT_FLAG = 9;         // 512
     static constexpr int INTERACT_PICKUP = 10;      // 1024
     static constexpr int INTERACT_SINK = 11;        // 2048
-    static constexpr int INTERACT_SHOOT_OVER = (1 << INTERACT_CHAIR | 1 << INTERACT_CRATE); // 33
-    static constexpr int WORLD_COUNTER = (1 << INTERACT_CHAIR | 1 << INTERACT_BARRICADE | 1 << INTERACT_BARREL | 1 << INTERACT_STATUE | 1 << INTERACT_CRATE | 1 << INTERACT_FLAG | 1 << INTERACT_SINK); // 2607
+    static constexpr int INTERACT_SHOOT_OVER = (bit32(INTERACT_CHAIR) | bit32(INTERACT_CRATE)); // 33
+    static constexpr int WORLD_COUNTER = (bit32(INTERACT_CHAIR) | bit32(INTERACT_BARRICADE) | bit32(INTERACT_BARREL) | bit32(INTERACT_STATUE) | bit32(INTERACT_CRATE) | bit32(INTERACT_FLAG) | bit32(INTERACT_SINK)); // 2607
     static constexpr int INTERACT_BARREL_DMG = 40;
 
     static constexpr int MONSTER_START = 0; 
@@ -89,9 +90,9 @@ public:
     static constexpr int MAX_MONSTER_TYPES = 15;
     static constexpr int MONSTER_END = 16;
 
-    static constexpr int DYNAMITE_SCARED_MONSTERS = (1 << MONSTER_SOLDIER_DUMB | 1 << MONSTER_SOLDIER | 1 << MONSTER_WORKER | 1 << MONSTER_OFFICER | 1 << MONSTER_TROOPER | 1 << MONSTER_ELITE_GUARD); // 207
-    static constexpr int EVADING_MONSTERS = (1 << MONSTER_SOLDIER | 1 << MONSTER_WORKER | 1 << MONSTER_OFFICER | 1 << MONSTER_ELITE_GUARD | 1 << BOSS_OLARIC | 1 << BOSS_MARRIANNA); // 12430
-    static constexpr int FEAR_IMMUNE_MONSTERS = (1 << MONSTER_TORMENTOR | 1 << BOSS_OLARIC | 1 << BOSS_MARRIANNA | 1 << BOSS_HARBINGER); // 29184
+    static constexpr int DYNAMITE_SCARED_MONSTERS = (bit32(MONSTER_SOLDIER_DUMB) | bit32(MONSTER_SOLDIER) | bit32(MONSTER_WORKER) | bit32(MONSTER_OFFICER) | bit32(MONSTER_TROOPER) | bit32(MONSTER_ELITE_GUARD)); // 207
+    static constexpr int EVADING_MONSTERS = (bit32(MONSTER_SOLDIER) | bit32(MONSTER_WORKER) | bit32(MONSTER_OFFICER) | bit32(MONSTER_ELITE_GUARD) | bit32(BOSS_OLARIC) | bit32(BOSS_MARRIANNA)); // 12430
+    static constexpr int FEAR_IMMUNE_MONSTERS = (bit32(MONSTER_TORMENTOR) | bit32(BOSS_OLARIC) | bit32(BOSS_MARRIANNA) | bit32(BOSS_HARBINGER)); // 29184
 
     static constexpr int NPC_PLAYER = 0;
     static constexpr int NPC_SPY = 1;
@@ -640,7 +641,7 @@ public:
     static constexpr int EVFL_MFLAG_SET = 2;
     static constexpr int CHANGEMAP_FADE_BIT = 128;
     static constexpr int CHANGEMAP_SHOWSTAT_SHIFT = 31;
-    static constexpr int CHANGEMAP_SHOWSTATS_BIT = (1 << CHANGEMAP_SHOWSTAT_SHIFT);
+    static constexpr int CHANGEMAP_SHOWSTATS_BIT = (bit32(CHANGEMAP_SHOWSTAT_SHIFT));
     static constexpr int STATE_MAX = 8;
     static constexpr char HYPHEN = '-';
     static constexpr char NEWLINE = '|';
@@ -653,7 +654,7 @@ public:
     static constexpr int MANIM_SHIFT = 4;
     static constexpr int MANIM_MASK = (15 << MANIM_SHIFT); // 240
     static constexpr int MANIM_IDLE = (0 << MANIM_SHIFT); // 0
-    static constexpr int MANIM_IDLE_BACK = (1 << MANIM_SHIFT); // 16
+    static constexpr int MANIM_IDLE_BACK = (bit32(MANIM_SHIFT)); // 16
     static constexpr int MANIM_WALK_FRONT = (2 << MANIM_SHIFT); // 32
     static constexpr int MANIM_WALK_BACK = (3 << MANIM_SHIFT); // 48
     static constexpr int MANIM_ATTACK1 = (4 << MANIM_SHIFT); // 64
@@ -1334,23 +1335,23 @@ public:
     static constexpr int SPRITE_SHIFT_CLIPZ = 30;
     static constexpr int SPRITE_SHIFT_DOORLERP = 31;
 
-    static constexpr int SPRITE_FLAG_HIDDEN             = (1 << SPRITE_SHIFT_HIDDEN); // 0x10000
-    static constexpr int SPRITE_FLAG_FLIP_HORIZONTAL    = (1 << SPRITE_SHIFT_FLIP_HORIZONTAL); // 0x20000
-    static constexpr int SPRITE_FLAG_FLIP_VERTICAL      = (1 << SPRITE_SHIFT_FLIP_VERTICAL); // 0x40000
-    static constexpr int SPRITE_FLAG_AUTO_ANIMATE       = (1 << SPRITE_SHIFT_AUTO_ANIMATE); // 0x80000
-    static constexpr int SPRITE_FLAG_TWO_SIDED          = (1 << SPRITE_SHIFT_TWO_SIDED); // 0x100000
-    static constexpr int SPRITE_FLAG_AUTOMAP_VISIBLE    = (1 << SPRITE_SHIFT_AUTOMAP_VISIBLE); // 0x200000
-    static constexpr int SPRITE_FLAG_NOENTITY           = (1 << SPRITE_SHIFT_NOENTITY); // 0x200000
-    static constexpr int SPRITE_FLAG_TILE               = (1 << SPRITE_SHIFT_TILE); // 0x400000
-    static constexpr int SPRITE_FLAG_SOLIDSIDE          = (1 << SPRITE_SHIFT_SOLIDSIDE); // 0x800000
-    static constexpr int SPRITE_FLAG_NORTH              = (1 << SPRITE_SHIFT_NORTH); // 0x1000000
-    static constexpr int SPRITE_FLAG_SOUTH              = (1 << SPRITE_SHIFT_SOUTH); // 0x2000000
-    static constexpr int SPRITE_FLAG_EAST               = (1 << SPRITE_SHIFT_EAST); // 0x4000000
-    static constexpr int SPRITE_FLAG_WEST               = (1 << SPRITE_SHIFT_WEST); // 0x8000000
-    static constexpr int SPRITE_FLAG_DECAL              = (1 << SPRITE_SHIFT_DECAL); // 0x10000000
-    static constexpr int SPRITE_FLAG_FLAT               = (1 << SPRITE_SHIFT_FLAT); // 0x20000000
-    static constexpr int SPRITE_FLAG_CLIPZ              = (1 << SPRITE_SHIFT_CLIPZ); // 0x40000000
-    static constexpr int SPRITE_FLAG_DOORLERP           = (1 << SPRITE_SHIFT_DOORLERP); // 0x80000000
+    static constexpr int SPRITE_FLAG_HIDDEN             = (bit32(SPRITE_SHIFT_HIDDEN)); // 0x10000
+    static constexpr int SPRITE_FLAG_FLIP_HORIZONTAL    = (bit32(SPRITE_SHIFT_FLIP_HORIZONTAL)); // 0x20000
+    static constexpr int SPRITE_FLAG_FLIP_VERTICAL      = (bit32(SPRITE_SHIFT_FLIP_VERTICAL)); // 0x40000
+    static constexpr int SPRITE_FLAG_AUTO_ANIMATE       = (bit32(SPRITE_SHIFT_AUTO_ANIMATE)); // 0x80000
+    static constexpr int SPRITE_FLAG_TWO_SIDED          = (bit32(SPRITE_SHIFT_TWO_SIDED)); // 0x100000
+    static constexpr int SPRITE_FLAG_AUTOMAP_VISIBLE    = (bit32(SPRITE_SHIFT_AUTOMAP_VISIBLE)); // 0x200000
+    static constexpr int SPRITE_FLAG_NOENTITY           = (bit32(SPRITE_SHIFT_NOENTITY)); // 0x200000
+    static constexpr int SPRITE_FLAG_TILE               = (bit32(SPRITE_SHIFT_TILE)); // 0x400000
+    static constexpr int SPRITE_FLAG_SOLIDSIDE          = (bit32(SPRITE_SHIFT_SOLIDSIDE)); // 0x800000
+    static constexpr int SPRITE_FLAG_NORTH              = (bit32(SPRITE_SHIFT_NORTH)); // 0x1000000
+    static constexpr int SPRITE_FLAG_SOUTH              = (bit32(SPRITE_SHIFT_SOUTH)); // 0x2000000
+    static constexpr int SPRITE_FLAG_EAST               = (bit32(SPRITE_SHIFT_EAST)); // 0x4000000
+    static constexpr int SPRITE_FLAG_WEST               = (bit32(SPRITE_SHIFT_WEST)); // 0x8000000
+    static constexpr int SPRITE_FLAG_DECAL              = (bit32(SPRITE_SHIFT_DECAL)); // 0x10000000
+    static constexpr int SPRITE_FLAG_FLAT               = (bit32(SPRITE_SHIFT_FLAT)); // 0x20000000
+    static constexpr int SPRITE_FLAG_CLIPZ              = (bit32(SPRITE_SHIFT_CLIPZ)); // 0x40000000
+    static constexpr int SPRITE_FLAG_DOORLERP           = (bit32(SPRITE_SHIFT_DOORLERP)); // 0x80000000
     static constexpr int SPRITE_FLAGS_ORIENTED          = (SPRITE_FLAG_NORTH | SPRITE_FLAG_SOUTH | SPRITE_FLAG_EAST | SPRITE_FLAG_WEST); // 0xF000000
     static constexpr int SPRITE_FLAGS_HORIZONTAL        = (SPRITE_FLAG_NORTH | SPRITE_FLAG_SOUTH); // 0x3000000
     static constexpr int SPRITE_FLAGS_VERTICAL          = (SPRITE_FLAG_EAST | SPRITE_FLAG_WEST); // 0xC000000

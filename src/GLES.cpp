@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 #include <cstdint>
 #include <assert.h>
@@ -253,7 +254,7 @@ void gles::CreateFadeTexture(int mediaID) {
 		assert(ct != &activeChain);
 		//__assert_rtn("CreateFadeTexture", "/Users/greghodges/doom2rpg/trunk/Doom2rpg_iphone/xcode/Classes/GLES.cpp", 366, "ct != &activeChain");
 
-		printf("Freeing media ID %i, %ix%i\n", (int)((intptr_t)ct - (intptr_t)this->chains) / sizeof(glChain), ct->width, ct->height);
+		printf("Freeing media ID %i, %ix%i\n", (int)(ct - this->chains), ct->width, ct->height);
 		ct->next->prev = ct->prev;
 		ct->prev->next = ct->next;
 		ct->prev = NULL;
@@ -279,7 +280,7 @@ void gles::CreateFadeTexture(int mediaID) {
 	ct->prev->next = ct;
 	ct->width = FADE_WIDTH;
 	ct->height = FADE_HEIGHT;
-	printf("Allocating media ID %i, %ix%i, activeTexels = %3.1f meg\n", (int)((intptr_t)ct - (intptr_t)this->chains) / sizeof(glChain), ct->width, ct->height, BYTES_TO_MEGABYTES(this->activeTexels));
+	printf("Allocating media ID %i, %ix%i, activeTexels = %3.1f meg\n", (int)(ct - this->chains), ct->width, ct->height, BYTES_TO_MEGABYTES(this->activeTexels));
 
 	glGenTextures(1, &ct->texnum);
 	glBindTexture(GL_TEXTURE_2D, ct->texnum);
@@ -844,6 +845,7 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 	//__assert_rtn("CreateTextureForMediaID","/Users/greghodges/doom2rpg/trunk/Doom2rpg_iphone/xcode/Classes/GLES.cpp", 471,"mediaID >= 0 && mediaID < MAX_MEDIA");
 
 	int Size = 0;
+	int palCount = 256;
 	if (v5 == mediaID)
 	{
 		if (!render->skyMapTexels)
@@ -851,6 +853,7 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 		v7 = 0;
 		__src = render->skyMapTexels;
 		v9 = render->skyMapPalette[0];
+		palCount = render->skyMapPaletteLength;
 		v8 = 9;
 		v10 = 9;
 	}
@@ -860,6 +863,7 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 		__src = render->mediaTexels[v7];
 		Size = render->mediaTexelSizes2[v7];
 		v9 = render->mediaPalettes[render->mediaPalColors[mediaID] & 0x3FFF][0];
+		palCount = render->mediaPalettesSizes[render->mediaPalColors[mediaID] & 0x3FFF];
 		v12 = render->mediaDimensions[mediaID];
 		v8 = v12 & 0xF;
 		v10 = (v12 >> 4) & 0xF;
@@ -876,12 +880,12 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 	v14 = 0;
 	v15 = 0;
 	v16 = rgba;
-	width = 1 << v10;
-	height = 1 << v8;
+	width = bit32(v10);
+	height = bit32(v8);
 	v78 = 0;
 	do
 	{
-		rgb565 = v9[v15];
+		rgb565 = (v15 < palCount) ? v9[v15] : 0;	// (it read 256 colours from every palette, 16 colour ones too: past them)
 		b5 = rgb565 & 0x1F; // b5
 		g6 = (rgb565 >> 5) & 0x3F; // g6
 		r5 = (rgb565 >> 11) & 0x1F; // r5
@@ -1086,7 +1090,7 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 		assert(ct != &activeChain);
 		//__assert_rtn("CreateTextureForMediaID","/Users/greghodges/doom2rpg/trunk/Doom2rpg_iphone/xcode/Classes/GLES.cpp", 753,"ct != &activeChain");
 
-		printf ("Freeing media ID %i, %ix%i\n", (int)((intptr_t)ct - (intptr_t)this->chains) / sizeof(glChain), ct->width, ct->height);
+		printf ("Freeing media ID %i, %ix%i\n", (int)(ct - this->chains), ct->width, ct->height);
 
 		next = ct->next;
 		next->prev = ct->prev;
@@ -1116,7 +1120,7 @@ void gles::CreateTextureForMediaID(int n, int mediaID, bool b) {
 	ct->prev->next = ct;
 	ct->width = width;
 	ct->height = height;
-	printf("Allocating media ID %i, %ix%i, activeTexels = %3.1f meg\n", (int)((intptr_t)ct - (intptr_t)this->chains) / sizeof(glChain), width, height, BYTES_TO_MEGABYTES(this->activeTexels));
+	printf("Allocating media ID %i, %ix%i, activeTexels = %3.1f meg\n", (int)(ct - this->chains), width, height, BYTES_TO_MEGABYTES(this->activeTexels));
 
 	glGenTextures(1, &ct->texnum);
 	glBindTexture(GL_TEXTURE_2D, ct->texnum);

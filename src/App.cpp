@@ -316,7 +316,7 @@ Image* Applet::createImage(InputStream* inputStream, bool isTransparentMask)
 		img->height = img->piDIB->height;
 	}
 	else {
-		img->~Image();
+		Image::dispose(img);
 		img = nullptr;
 
 		Error("Expected image bpp 4 or 8. Found bpp %d", BitsPerPixel);
@@ -336,7 +336,7 @@ Image* Applet::loadImage(char* fileName, bool isTransparentMask) {
 	img = this->createImage(&iStream, isTransparentMask);
 
 	iStream.close();
-	iStream.~InputStream();
+	iStream.dispose();
 	return img;
 }
 
@@ -382,7 +382,7 @@ void Applet::Error(const char* fmt, ...) {
 
 	SDL_ShowMessageBox(&messageboxdata, NULL);
 
-	CAppContainer::getInstance()->~CAppContainer();
+	CAppContainer::getInstance()->shutdown();
 	exit(0);
 }
 
@@ -431,76 +431,76 @@ void Applet::loadTables() {
 	count23 = this->resource->getNumTableBytes(30);
 	count24 = this->resource->getNumTableBytes(31);
 
-	if (this->combat->wpinfo) { delete this->combat->wpinfo; }
+	if (this->combat->wpinfo) { delete[] this->combat->wpinfo; }
 	this->combat->wpinfo = new int32_t[count01];
 
-	if (this->combat->weapons) { delete this->combat->weapons; }
+	if (this->combat->weapons) { delete[] this->combat->weapons; }
 	this->combat->weapons = new int8_t[count02];
 
-	if (this->combat->monsterStats) { delete this->combat->monsterStats; }
+	if (this->combat->monsterStats) { delete[] this->combat->monsterStats; }
 	this->combat->monsterStats = new int8_t[count03];
 
-	if (this->canvas->keys_numeric) { delete this->canvas->keys_numeric; }
+	if (this->canvas->keys_numeric) { delete[] this->canvas->keys_numeric; }
 	this->canvas->keys_numeric = new int8_t[count04];
 
-	if (this->canvas->OSC_CYCLE) { delete this->canvas->OSC_CYCLE; }
+	if (this->canvas->OSC_CYCLE) { delete[] this->canvas->OSC_CYCLE; }
 	this->canvas->OSC_CYCLE = new int8_t[count05];
 
-	if (this->combat->monsterAttacks) { delete this->combat->monsterAttacks; }
+	if (this->combat->monsterAttacks) { delete[] this->combat->monsterAttacks; }
 	this->combat->monsterAttacks = new short[count06];
 
-	if (this->combat->tableCombatMasks) { delete this->combat->tableCombatMasks; }
+	if (this->combat->tableCombatMasks) { delete[] this->combat->tableCombatMasks; }
 	this->combat->tableCombatMasks = new int32_t[count07];
 
-	if (this->game->levelNames) { delete this->game->levelNames; }
+	if (this->game->levelNames) { delete[] this->game->levelNames; }
 	this->game->levelNames = new int16_t[count08];
 
-	if (this->canvas->movieEffects) { delete this->canvas->movieEffects; }
+	if (this->canvas->movieEffects) { delete[] this->canvas->movieEffects; }
 	this->canvas->movieEffects = new int32_t[count09];
 
-	if (this->particleSystem->monsterColors) { delete this->particleSystem->monsterColors; }
+	if (this->particleSystem->monsterColors) { delete[] this->particleSystem->monsterColors; }
 	this->particleSystem->monsterColors = new uint8_t[count10];
 
-	if (this->game->monsterSounds) { delete this->game->monsterSounds; }
+	if (this->game->monsterSounds) { delete[] this->game->monsterSounds; }
 	this->game->monsterSounds = new uint8_t[count11];
 
-	if (this->combat->monsterWeakness) { delete this->combat->monsterWeakness; }
+	if (this->combat->monsterWeakness) { delete[] this->combat->monsterWeakness; }
 	this->combat->monsterWeakness = new int8_t[count12];
 
-	if (this->render->sinTable) { delete this->render->sinTable; }
+	if (this->render->sinTable) { delete[] this->render->sinTable; }
 	this->render->sinTable = new int32_t[count13];
 
-	if (this->canvas->cocktailRecipes) { delete this->canvas->cocktailRecipes; }
+	if (this->canvas->cocktailRecipes) { delete[] this->canvas->cocktailRecipes; }
 	this->canvas->cocktailRecipes = new int8_t[count14];
 
-	if (this->canvas->cocktailNames) { delete this->canvas->cocktailNames; }
+	if (this->canvas->cocktailNames) { delete[] this->canvas->cocktailNames; }
 	this->canvas->cocktailNames = new int16_t[count15];
 
-	if (this->player->allMedals) { delete this->player->allMedals; }
+	if (this->player->allMedals) { delete[] this->player->allMedals; }
 	this->player->allMedals = new int8_t[count16];
 
-	if (this->player->bookMap) { delete this->player->bookMap; }
+	if (this->player->bookMap) { delete[] this->player->bookMap; }
 	this->player->bookMap = new int8_t[count17];
 
-	if (this->combat->weaponMasks) { delete this->combat->weaponMasks; }
+	if (this->combat->weaponMasks) { delete[] this->combat->weaponMasks; }
 	this->combat->weaponMasks = new int32_t[count18];
 
-	if (this->menuSystem->menuDialA_Anim1) { delete this->menuSystem->menuDialA_Anim1; }
+	if (this->menuSystem->menuDialA_Anim1) { delete[] this->menuSystem->menuDialA_Anim1; }
 	this->menuSystem->menuDialA_Anim1 = new int8_t[count19];
 
-	if (this->menuSystem->menuDialC_Anim1) { delete this->menuSystem->menuDialC_Anim1; }
+	if (this->menuSystem->menuDialC_Anim1) { delete[] this->menuSystem->menuDialC_Anim1; }
 	this->menuSystem->menuDialC_Anim1 = new int8_t[count20];
 
-	if (this->menuSystem->menuDialA_Anim2) { delete this->menuSystem->menuDialA_Anim2; }
+	if (this->menuSystem->menuDialA_Anim2) { delete[] this->menuSystem->menuDialA_Anim2; }
 	this->menuSystem->menuDialA_Anim2 = new int8_t[count21];
 
-	if (this->menuSystem->menuDialC_Anim2) { delete this->menuSystem->menuDialC_Anim2; }
+	if (this->menuSystem->menuDialC_Anim2) { delete[] this->menuSystem->menuDialC_Anim2; }
 	this->menuSystem->menuDialC_Anim2 = new int8_t[count22];
 
-	if (this->menuSystem->menuSlideAnim1) { delete this->menuSystem->menuSlideAnim1; }
+	if (this->menuSystem->menuSlideAnim1) { delete[] this->menuSystem->menuSlideAnim1; }
 	this->menuSystem->menuSlideAnim1 = new int8_t[count23];
 
-	if (this->menuSystem->menuSlideAnim2) { delete this->menuSystem->menuSlideAnim2; }
+	if (this->menuSystem->menuSlideAnim2) { delete[] this->menuSystem->menuSlideAnim2; }
 	this->menuSystem->menuSlideAnim2 = new int8_t[count24];
 
 	// [GEC]
@@ -588,29 +588,29 @@ void Applet::loadRuntimeImages() {
 void Applet::freeStaticImages() {
 	if (this->initLoadImages) {
 		this->initLoadImages = false;
-		this->canvas->imgMapCursor->~Image();
+		Image::dispose(this->canvas->imgMapCursor);
 		this->canvas->imgMapCursor = nullptr;
-		this->canvas->imgChatHook_Monster->~Image();
+		Image::dispose(this->canvas->imgChatHook_Monster);
 		this->canvas->imgChatHook_Monster = nullptr;
-		this->canvas->imgChatHook_NPC->~Image();
+		Image::dispose(this->canvas->imgChatHook_NPC);
 		this->canvas->imgChatHook_NPC = nullptr;
-		this->canvas->imgChatHook_Player->~Image();
+		Image::dispose(this->canvas->imgChatHook_Player);
 		this->canvas->imgChatHook_Player = nullptr;
-		this->canvas->imgDialogScroll->~Image();
+		Image::dispose(this->canvas->imgDialogScroll);
 		this->canvas->imgDialogScroll = nullptr;
-		this->canvas->imgClipboardBG->~Image();
+		Image::dispose(this->canvas->imgClipboardBG);
 		this->canvas->imgClipboardBG = nullptr;
-		this->hud->imgScope->~Image();
+		Image::dispose(this->hud->imgScope);
 		this->hud->imgScope = nullptr;
-		this->hud->imgDamageVignette->~Image();
+		Image::dispose(this->hud->imgDamageVignette);
 		this->hud->imgDamageVignette = nullptr;
-		this->hud->imgActions->~Image();
+		Image::dispose(this->hud->imgActions);
 		this->hud->imgActions = nullptr;
-		this->hud->imgBottomBarIcons->~Image();
+		Image::dispose(this->hud->imgBottomBarIcons);
 		this->hud->imgBottomBarIcons = nullptr;
-		this->hud->imgHudFill->~Image();
+		Image::dispose(this->hud->imgHudFill);
 		this->hud->imgHudFill = nullptr;
-		this->hud->imgIce->~Image();
+		Image::dispose(this->hud->imgIce);
 		this->hud->imgIce = nullptr;
 	}
 }

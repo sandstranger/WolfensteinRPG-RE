@@ -409,7 +409,7 @@ void TinyGL::ClipPolygon(int i, int n) {
 				int n7 = n - 1 - n5;
 				if (n7 > 0) {
 					TGLVert* tglVert = &this->cv[n];
-					memcpy(&this->cv[n5 + 2], &this->cv[n5 + 1], n7 * sizeof(TGLVert));
+					memmove(&this->cv[n5 + 2], &this->cv[n5 + 1], n7 * sizeof(TGLVert));	// (the ranges overlap)
 					memcpy(&this->cv[n5 + 1], tglVert, sizeof(TGLVert));
 					++n6;
 				}
@@ -439,7 +439,7 @@ void TinyGL::ClipPolygon(int i, int n) {
 		for (int n9 = 0; n9 < n; ++n9) {
 			TGLVert* tglVert5 = &this->cv[n9];
 			if (tglVert5->clipDist < 0) {
-				memcpy(&this->cv[n9 + 0], &this->cv[n9 + 1], (n - 1 - n9) * sizeof(TGLVert));
+				memmove(&this->cv[n9 + 0], &this->cv[n9 + 1], (n - 1 - n9) * sizeof(TGLVert));	// (the ranges overlap)
 				--n9;
 				--n;
 				memcpy(&this->cv[n], tglVert5, sizeof(TGLVert));
@@ -878,6 +878,6 @@ void TinyGL::applyClearColorBuffer() {
 	int n3 = n2;
 	for (int j = 1; j < this->viewportHeight; ++j) {
 		n3 += this->screenWidth;
-		memcpy(&pixels[n3], &pixels[n2], this->viewportWidth * sizeof(uint16_t));
+		memmove(&pixels[n3], &pixels[n2], this->viewportWidth * sizeof(uint16_t));	// (the ranges overlap)
 	}
 }

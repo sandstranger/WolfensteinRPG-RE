@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -121,12 +122,12 @@ bool Render::startup() {
 	//-------------------------------
 	this->numMapSprites = 0;
 	if (this->mapSprites) {
-		delete this->mapSprites;
+		delete[] this->mapSprites;
 	}
 	this->mapSprites = nullptr;
 
 	if (this->mapSpriteInfo) {
-		delete this->mapSpriteInfo;
+		delete[] this->mapSpriteInfo;
 	}
 	this->mapSpriteInfo = nullptr;
 
@@ -134,14 +135,14 @@ bool Render::startup() {
 	this->lastTileEvent = -1;
 	this->numTileEvents = 0;
 	if (this->tileEvents) {
-		delete this->tileEvents;
+		delete[] this->tileEvents;
 	}
 	this->tileEvents = nullptr;
 
 	//-------------------------------
 	this->mapByteCodeSize = 0;
 	if (this->mapByteCode) {
-		delete this->mapByteCode;
+		delete[] this->mapByteCode;
 	}
 	this->mapByteCode = nullptr;
 
@@ -217,112 +218,112 @@ void Render::unloadMap() {
 	this->startFogLerp(32752, 32752, 0);
 	this->_gles->UnloadSkyMap(); // From Doom II RPG
 
-	if (this->mediaBounds) { delete this->mediaBounds; }
+	if (this->mediaBounds) { delete[] this->mediaBounds; }
 	this->mediaBounds = nullptr;
 
-	if (this->mediaMappings) { delete this->mediaMappings; }
+	if (this->mediaMappings) { delete[] this->mediaMappings; }
 	this->mediaMappings = nullptr;
 
-	if (this->mediaDimensions) { delete this->mediaDimensions; }
+	if (this->mediaDimensions) { delete[] this->mediaDimensions; }
 	this->mediaDimensions = nullptr;
 
-	if (this->mediaPalColors) { delete this->mediaPalColors; }
+	if (this->mediaPalColors) { delete[] this->mediaPalColors; }
 	this->mediaPalColors = nullptr;
 
-	if (this->mediaTexelSizes) { delete this->mediaTexelSizes; }
+	if (this->mediaTexelSizes) { delete[] this->mediaTexelSizes; }
 	this->mediaTexelSizes = nullptr;
 
-	if (this->mediaPalettesSizes) { delete this->mediaPalettesSizes; }
+	if (this->mediaPalettesSizes) { delete[] this->mediaPalettesSizes; }
 	this->mediaPalettesSizes = nullptr;
 
-	if (this->mediaTexelSizes2) { delete this->mediaTexelSizes2; }
+	if (this->mediaTexelSizes2) { delete[] this->mediaTexelSizes2; }
 	this->mediaTexelSizes2 = nullptr;
 
 	if (this->mediaTexels) {
 		for (int i = 0; i < 1024; i++) {
-			if (this->mediaTexels[i]) { delete this->mediaTexels[i]; }
+			if (this->mediaTexels[i]) { delete[] this->mediaTexels[i]; }
 			this->mediaTexels[i] = nullptr;
 		}
-		delete this->mediaTexels;
+		delete[] this->mediaTexels;
 	}
 	this->mediaTexels = nullptr;
 
 	if (this->mediaPalettes) {
 		for (int i = 0; i < 1024; i++) {
 			for (int j = 0; j < 16; j++) {
-				if (this->mediaPalettes[i][j]) { delete this->mediaPalettes[i][j]; }
+				if (this->mediaPalettes[i][j]) { delete[] this->mediaPalettes[i][j]; }
 				this->mediaPalettes[i][j] = nullptr;
 			}
-			delete this->mediaPalettes[i];
+			delete[] this->mediaPalettes[i];
 			this->mediaPalettes[i] = nullptr;
 		}
 
-		delete this->mediaPalettes;
+		delete[] this->mediaPalettes;
 	}
 	this->mediaPalettes = nullptr;
 
-	if (this->normals) { delete this->normals; }
+	if (this->normals) { delete[] this->normals; }
 	this->normals = nullptr;
 
-	if (this->nodeNormalIdxs) { delete this->nodeNormalIdxs; }
+	if (this->nodeNormalIdxs) { delete[] this->nodeNormalIdxs; }
 	this->nodeNormalIdxs = nullptr;
 
-	if (this->nodeOffsets) { delete this->nodeOffsets; }
+	if (this->nodeOffsets) { delete[] this->nodeOffsets; }
 	this->nodeOffsets = nullptr;
 
-	if (this->nodeChildOffset1) { delete this->nodeChildOffset1; }
+	if (this->nodeChildOffset1) { delete[] this->nodeChildOffset1; }
 	this->nodeChildOffset1 = nullptr;
 
-	if (this->nodeChildOffset2) { delete this->nodeChildOffset2; }
+	if (this->nodeChildOffset2) { delete[] this->nodeChildOffset2; }
 	this->nodeChildOffset2 = nullptr;
 
-	if (this->nodeSprites) { delete this->nodeSprites; }
+	if (this->nodeSprites) { delete[] this->nodeSprites; }
 	this->nodeSprites = nullptr;
 
-	if (this->nodeBounds) { delete this->nodeBounds; }
+	if (this->nodeBounds) { delete[] this->nodeBounds; }
 	this->nodeBounds = nullptr;
 
-	if (this->nodePolys) { delete this->nodePolys; }
+	if (this->nodePolys) { delete[] this->nodePolys; }
 	this->nodePolys = nullptr;
 
-	if (this->lineFlags) { delete this->lineFlags; }
+	if (this->lineFlags) { delete[] this->lineFlags; }
 	this->lineFlags = nullptr;
 
-	if (this->lineXs) { delete this->lineXs; }
+	if (this->lineXs) { delete[] this->lineXs; }
 	this->lineXs = nullptr;
 
-	if (this->lineYs) { delete this->lineYs; }
+	if (this->lineYs) { delete[] this->lineYs; }
 	this->lineYs = nullptr;
 
-	if (this->heightMap) { delete this->heightMap; }
+	if (this->heightMap) { delete[] this->heightMap; }
 	this->heightMap = nullptr;
 
 	this->numMapSprites = 0;
-	if (this->mapSprites) { delete this->mapSprites; }
+	if (this->mapSprites) { delete[] this->mapSprites; }
 	this->mapSprites = nullptr;
 
-	if (this->mapSpriteInfo) { delete this->mapSpriteInfo; }
+	if (this->mapSpriteInfo) { delete[] this->mapSpriteInfo; }
 	this->mapSpriteInfo = nullptr;
 
 	this->numTileEvents = 0;
 	this->mapByteCodeSize = 0;
 	app->game->mapSecretsFound = 0;
 
-	if (this->tileEvents) { delete this->tileEvents; }
+	if (this->tileEvents) { delete[] this->tileEvents; }
 	this->tileEvents = nullptr;
 
-	if (this->mapByteCode) { delete this->mapByteCode; }
+	if (this->mapByteCode) { delete[] this->mapByteCode; }
 	this->mapByteCode = nullptr;
 
-	if (this->skyMapTexels) { delete this->skyMapTexels; }
+	if (this->skyMapTexels) { delete[] this->skyMapTexels; }
 	this->skyMapTexels = nullptr;
 
 	if (this->skyMapPalette) {
 		for (int i = 0; i < 16; i++) {
-			if (this->skyMapPalette[i]) { delete this->skyMapPalette[i]; }
+			if (this->skyMapPalette[i]) { delete[] this->skyMapPalette[i]; }
 			this->skyMapPalette[i] = nullptr;
 		}
-		delete this->skyMapPalette;
+		delete[] this->skyMapPalette;
 	}
 	this->skyMapPalette = nullptr;
 
@@ -550,7 +551,7 @@ void Render::FinalizeMedia() {
 	IS.close();
 	this->_gles->CreateAllActiveTextures();
 	app->canvas->updateLoadingBar(false);
-	IS.~InputStream();
+	IS.dispose();
 }
 
 bool Render::beginLoadMap(int mapNameID) {
@@ -833,6 +834,7 @@ bool Render::beginLoadMap(int mapNameID) {
 
 	int skyIndex = ((this->mapNameID - 1) / 3 % 3) * 2;
 	int skyPal = app->resource->getNumTableShorts(skyIndex + 19);
+	this->skyMapPaletteLength = skyPal;
 	int skyTexel = app->resource->getNumTableBytes(skyIndex + 20);
 
 	this->skyMapPalette = new uint16_t * [16];
@@ -2101,7 +2103,7 @@ void Render::renderSpriteObject(int n) {
 		if (app->canvas->state == Canvas::ST_DRIVING || app->canvas->oldState == Canvas::ST_DRIVING)
 		{
 			//if (((580 >> def->eType) & 1) != 0) {
-			if ((1 << entity->def->eType & (1 << Enums::ET_MONSTER | 1 << Enums::ET_ITEM | 1 << Enums::ET_CORPSE))) {
+			if ((bit32(entity->def->eType) & (1 << Enums::ET_MONSTER | 1 << Enums::ET_ITEM | 1 << Enums::ET_CORPSE))) {
 				scaleFactor = 2 * scaleFactor / 3;
 			}
 		}
@@ -2736,10 +2738,10 @@ void Render::setupTexture(int n, int n2, int renderMode, int renderFlags) {
 		app->tinyGL->imageBounds[3] = (uint16_t)(this->mediaBounds[(n4 << 2) + 3] & 0xFFF);
 		this->isSkyMap = false;
 	}
-	app->tinyGL->sWidth = 1 << n6;
+	app->tinyGL->sWidth = bit32(n6);
 	app->tinyGL->sShift = 26 - n6;
 	app->tinyGL->sMask = app->tinyGL->sWidth - 1;
-	app->tinyGL->tHeight = 1 << n5;
+	app->tinyGL->tHeight = bit32(n5);
 	app->tinyGL->tShift = 26 - (n5 + n6);
 	app->tinyGL->tMask = (app->tinyGL->tHeight - 1) * app->tinyGL->sWidth;
 }

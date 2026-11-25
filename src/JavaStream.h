@@ -32,11 +32,13 @@ public:
 	InputStream();
 	// Destructor
 	~InputStream();
+	void dispose();	// what IS.~InputStream() was for: the object lives on (and is destroyed once, at its scope's end)
 
 	bool startup();
 	bool loadResource(const char* fileName);
 	bool loadFile(const char* fileName, int loadType);
 	void close();
+	uint8_t byteAt(int i);	// the byte i past the cursor, or 0 past the data's end
 	int readInt();
 	int readShort();
 	bool readBoolean();
@@ -71,6 +73,7 @@ public:
 	OutputStream();
 	// Destructor
 	~OutputStream();
+	void dispose();	// as InputStream's
 
 	int openFile(const char* fileName, int openMode);
 	void close();

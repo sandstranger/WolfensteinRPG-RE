@@ -27,6 +27,7 @@ public:
 	Image();
 	// Destructor
 	~Image();
+	static void dispose(Image* img);	// what img->~Image() was for (img can be null)
 
 	void CreateTexture(uint16_t* data, uint32_t width, uint32_t height);
 	void DrawTexture(int texX, int texY, int texW, int texH, int posX, int posY, int rotateMode, int renderMode);

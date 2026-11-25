@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -525,7 +526,7 @@ void Hud::drawEffects(Graphics* graphics) {
 		app->player->drawBuffs(graphics);
 	}
 	if (app->time < this->damageTime && this->damageCount > 0 && app->combat->totalDamage > 0) {
-		if ((1 << this->damageDir & 0xC1) != 0x0) {
+		if ((bit32(this->damageDir) & 0xC1) != 0x0) {
 			int n4 = app->canvas->screenRect[3] - 20 - 25;
 			int n5 = 0;
 			int n6;

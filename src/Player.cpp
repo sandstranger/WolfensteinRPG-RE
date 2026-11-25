@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -187,7 +188,8 @@ void Player::readyWeapon() {
 void Player::selectWeapon(int i) {
     Applet* app = CAppContainer::getInstance()->app;
 
-    if ((this->weapons & ~this->disabledWeapons & 1 << i) == 0x0) {
+    // (i is -1 for none: 1 << -1 is undefined, and differs between x86 and arm)
+    if ((i < 0 || i >= 32) || (this->weapons & ~this->disabledWeapons & bit32(i)) == 0x0) {
         this->ce->weapon = i;
         this->selectNextWeapon();
     }
@@ -217,7 +219,7 @@ void Player::selectPrevWeapon() {
     int weapon = this->ce->weapon;
     int n = this->weapons & ~this->disabledWeapons;
     for (int i = weapon - 1; i >= 0; --i) {
-        if ((n & 1 << i) != 0x0) {
+        if ((n & bit32(i)) != 0x0) {
             int n2 = i * Combat::WEAPON_MAX_FIELDS;
             if (app->combat->weapons[n2 + Combat::WEAPON_FIELD_AMMOUSAGE] == 0 || this->ammo[app->combat->weapons[n2 + Combat::WEAPON_FIELD_AMMOTYPE]] != 0) {
                 this->selectWeapon(i);
@@ -227,7 +229,7 @@ void Player::selectPrevWeapon() {
     }
     if (this->ce->weapon == weapon && weapon != Enums::WP_ITEM) {
         for (int j = Enums::WP_ITEM; j > weapon; --j) {
-            if ((n & 1 << j) != 0x0) {
+            if ((n & bit32(j)) != 0x0) {
                 int n3 = j * Combat::WEAPON_MAX_FIELDS;
                 if (app->combat->weapons[n3 + Combat::WEAPON_FIELD_AMMOUSAGE] == 0 || this->ammo[app->combat->weapons[n3 + Combat::WEAPON_FIELD_AMMOTYPE]] != 0) {
                     this->selectWeapon(j);
@@ -248,7 +250,7 @@ void Player::selectNextWeapon() {
     int weapon = this->ce->weapon;
     int n = this->weapons & ~this->disabledWeapons;
     for (int i = weapon + 1; i < Enums::WP_PLAYERMAX; ++i) {
-        if ((n & 1 << i) != 0x0) {
+        if ((n & bit32(i)) != 0x0) {
             int n2 = i * Combat::WEAPON_MAX_FIELDS;
             if (app->combat->weapons[n2 + Combat::WEAPON_FIELD_AMMOUSAGE] == 0 || this->ammo[app->combat->weapons[n2 + Combat::WEAPON_FIELD_AMMOTYPE]] != 0) {
                 this->selectWeapon(i);
@@ -258,7 +260,7 @@ void Player::selectNextWeapon() {
     }
     if (this->ce->weapon == weapon && weapon != 0) {
         for (int j = 0; j < weapon; ++j) {
-            if ((n & 1 << j) != 0x0) {
+            if ((n & bit32(j)) != 0x0) {
                 int n3 = j * Combat::WEAPON_MAX_FIELDS;
                 if (app->combat->weapons[n3 + Combat::WEAPON_FIELD_AMMOUSAGE] == 0 || this->ammo[app->combat->weapons[n3 + Combat::WEAPON_FIELD_AMMOTYPE]] != 0) {
                     this->selectWeapon(j);
@@ -287,7 +289,7 @@ bool Player::requireStat(int n, int n2) {
 }
 
 bool Player::requireItem(int n, int n2, int n3, int n4) {
-    int n5 = 1 << n2;
+    int n5 = bit32(n2);
     if (n != 1) {
         return n == 0 && this->inventory[n2 - 0] >= n3 && this->inventory[n2 - 0] <= n4;
     }
@@ -417,7 +419,7 @@ int Player::calcScore() {
     bool b = true;
     int i;
     for (i = 0; i <= 8; ++i) {
-        if ((this->killedMonstersLevels & 1 << i) != 0x0) {
+        if ((this->killedMonstersLevels & bit32(i)) != 0x0) {
             n += 1000;
         }
         else {
@@ -445,7 +447,7 @@ int Player::calcScore() {
     }
     bool b2 = true;
     for (i = 0; i <= 8; ++i) {
-        if ((this->foundSecretsLevels & 1 << i) != 0x0) {
+        if ((this->foundSecretsLevels & bit32(i)) != 0x0) {
             n += 1000;
         }
         else {
@@ -461,7 +463,7 @@ int Player::calcScore() {
             int i6 = this->medals[i5];
             for (int i7 = 0; i7 < 32; i7++) {
                 // if ((i6 & 1 << i7) == 1)  // <- [Original Code] A bug? It only verifies one medal per field. / �Un error? Solo verifica una medalla por campo.
-                if ((i6 & 1 << i7) != 0x0) { // <- [GEC] Allows you to verify all the medals collected. / Permite verificar todas las medallas colectadas.
+                if ((i6 & bit32(i7)) != 0x0) { // <- [GEC] Allows you to verify all the medals collected. / Permite verificar todas las medallas colectadas.
                     n += 100;
                 }
             }
@@ -714,7 +716,7 @@ void Player::died() {
 bool Player::fireWeapon(Entity* entity, int n, int n2) {
     Applet* app = CAppContainer::getInstance()->app;
 
-    if (app->combat->weaponDown || (this->disabledWeapons != 0 && !(this->weapons & 1 << this->ce->weapon))) {
+    if (app->combat->weaponDown || (this->disabledWeapons != 0 && !(this->weapons & bit32(this->ce->weapon)))) {
         return false;
     }
 
@@ -964,7 +966,7 @@ bool Player::give(int n, int n2, int n3, bool b) {
     if (n3 == 0) {
         return false;
     }
-    int i4 = 1 << n2;
+    int i4 = bit32(n2);
     switch (n) {
     case Enums::IT_INVENTORY:
         i5 = n3 + this->inventory[n2 - 0];
@@ -1076,29 +1078,29 @@ void Player::updateQuests(short n, int n2) {
             app->Error(Enums::ERR_MAX_NOTEBOOKINDEXES); // J2ME
             return;
         }
-        this->questComplete &= (uint8_t)~(1 << this->numNotebookIndexes);
-        this->questFailed &= (uint8_t)~(1 << this->numNotebookIndexes);
+        this->questComplete &= (uint8_t)~(bit32(this->numNotebookIndexes));
+        this->questFailed &= (uint8_t)~(bit32(this->numNotebookIndexes));
         this->notebookIndexes[this->numNotebookIndexes++] = n;
     }
     else {
         for (int i = 0; i < this->numNotebookIndexes; ++i) {
             if (n == this->notebookIndexes[i]) {
                 if (n2 == 1) {
-                    this->questComplete |= (uint8_t)(1 << i);
+                    this->questComplete |= (uint8_t)(bit32(i));
                 }
                 else if (n2 == 2) {
-                    this->questFailed |= (uint8_t)(1 << i);
+                    this->questFailed |= (uint8_t)(bit32(i));
                 }
                 return;
             }
         }
         if (n2 == 1) {
-            this->questComplete |= (uint8_t)(1 << this->numNotebookIndexes);
-            this->questFailed &= (uint8_t)~(1 << this->numNotebookIndexes);
+            this->questComplete |= (uint8_t)(bit32(this->numNotebookIndexes));
+            this->questFailed &= (uint8_t)~(bit32(this->numNotebookIndexes));
         }
         else if (n2 == 2) {
-            this->questComplete &= (uint8_t)~(1 << this->numNotebookIndexes);
-            this->questFailed |= (uint8_t)(1 << this->numNotebookIndexes);
+            this->questComplete &= (uint8_t)~(bit32(this->numNotebookIndexes));
+            this->questFailed |= (uint8_t)(bit32(this->numNotebookIndexes));
         }
         this->notebookPositions[this->numNotebookIndexes] = 0;
         this->notebookIndexes[this->numNotebookIndexes++] = n;
@@ -1115,11 +1117,11 @@ void Player::setQuestTile(int n, int n2, int n3) {
 }
 
 bool Player::isQuestDone(int n) {
-    return (this->questComplete & 1 << n) != 0x0;
+    return (this->questComplete & bit32(n)) != 0x0;
 }
 
 bool Player::isQuestFailed(int n) {
-    return (this->questFailed & 1 << n) != 0x0;
+    return (this->questFailed & bit32(n)) != 0x0;
 }
 
 void Player::formatTime(int n, Text* text) {
@@ -1147,8 +1149,8 @@ void Player::showInvHelp(int n, bool b) {
 
     if (this->enableHelp || b) {
         int n2 = n - 0;
-        if (!(this->invHelpBitmask & 1 << n2)) {
-            this->invHelpBitmask |= 1 << n2;
+        if (!(this->invHelpBitmask & bit32(n2))) {
+            this->invHelpBitmask |= bit32(n2);
             app->canvas->enqueueHelpDialog(app->entityDefManager->find(Enums::ET_ITEM, Enums::IT_INVENTORY, n));
         }
     }
@@ -1158,7 +1160,7 @@ void Player::showAmmoHelp(int n, bool b) {
     Applet* app = CAppContainer::getInstance()->app;
 
     if (this->enableHelp || b) {
-        int n2 = 1 << n;
+        int n2 = bit32(n);
         if (!(this->ammoHelpBitmask & n2)) {
             this->ammoHelpBitmask |= n2;
             app->canvas->enqueueHelpDialog(app->entityDefManager->find(Enums::ET_ITEM, Enums::IT_AMMO, n));
@@ -1175,10 +1177,10 @@ void Player::showHelp(short n, bool b) {
     if (!this->enableHelp && !b) {
         return;
     }
-    if ((this->helpBitmask & 1 << n) != 0x0 && !b) {
+    if ((this->helpBitmask & bit32(n)) != 0x0 && !b) {
         return;
     }
-    this->helpBitmask |= 1 << n;
+    this->helpBitmask |= bit32(n);
     app->canvas->enqueueHelpDialog(n);
     if (n != CodeStrings::GENHELP_JOURNAL && (app->canvas->state == Canvas::ST_AUTOMAP || app->canvas->state == Canvas::ST_PLAYING)) {
         app->canvas->dequeueHelpDialog();
@@ -1188,8 +1190,8 @@ void Player::showHelp(short n, bool b) {
 void Player::showWeaponHelp(int n, bool b) {
     Applet* app = CAppContainer::getInstance()->app;
 
-    if ((this->enableHelp || b) && !(this->weaponHelpBitmask & 1 << n)) {
-        this->weaponHelpBitmask |= 1 << n;
+    if ((this->enableHelp || b) && !(this->weaponHelpBitmask & bit32(n))) {
+        this->weaponHelpBitmask |= bit32(n);
         app->canvas->enqueueHelpDialog(app->entityDefManager->find(Enums::ET_ITEM, Enums::IT_WEAPON, n));
     }
 }
@@ -1197,8 +1199,8 @@ void Player::showWeaponHelp(int n, bool b) {
 void Player::showArmorHelp(int n, bool b) {
     Applet* app = CAppContainer::getInstance()->app;
 
-    if ((this->enableHelp || b) && !(this->armorHelpBitmask & 1 << n)) {
-        this->armorHelpBitmask |= 1 << n;
+    if ((this->enableHelp || b) && !(this->armorHelpBitmask & bit32(n))) {
+        this->armorHelpBitmask |= bit32(n);
         app->canvas->enqueueHelpDialog(app->entityDefManager->find(Enums::ET_ITEM, Enums::IT_ARMOR, n));
     }
 }
@@ -1220,7 +1222,7 @@ void Player::drawBuffs(Graphics* graphics) {
     }
     int n5 = numbuffs * 31 + 6;
     for (int n6 = 0; n6 < Enums::BUFF_MAX && n4 < 6; ++n6) {
-        if (this->buffs[Enums::OFS_BUFF_COUNT + n6] > 0 && (1 << n6 & Enums::BUFF_AMT_NOT_DRAWN) == 0x0) {
+        if (this->buffs[Enums::OFS_BUFF_COUNT + n6] > 0 && (bit32(n6) & Enums::BUFF_AMT_NOT_DRAWN) == 0x0) {
             if (this->buffs[Enums::OFS_BUFF_AMOUNT + n6] > 99 || this->buffs[Enums::OFS_BUFF_AMOUNT + n6] < -99) {
                 n2 = n - 73;
                 break;
@@ -1493,7 +1495,7 @@ void Player::translateStatusEffects() {
 
     for (int k = 0; k < Enums::BUFF_MAX; k++) {
         if (this->buffs[Enums::OFS_BUFF_COUNT + k] > 0) {
-            if ((1 << k & Enums::BUFF_NO_AMOUNT) == 0x0 && this->buffs[Enums::OFS_BUFF_AMOUNT + k] == 0) {
+            if ((bit32(k) & Enums::BUFF_NO_AMOUNT) == 0x0 && this->buffs[Enums::OFS_BUFF_AMOUNT + k] == 0) {
                 this->buffs[Enums::OFS_BUFF_COUNT + k] = 0;
             }
             else {
@@ -1574,7 +1576,7 @@ void Player::drawStatusEffectIcon(Graphics* graphics, int n, int n2, int n3, int
         smallBuffer->append('%');
         smallBuffer->append(n2);
     }
-    else if ((1 << n & 0x3A07) == 0x0) {
+    else if ((bit32(n) & 0x3A07) == 0x0) {
         if (n2 >= 0) {
             smallBuffer->append('+');
             smallBuffer->append(n2);

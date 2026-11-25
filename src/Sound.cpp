@@ -295,7 +295,7 @@ bool Sound::openAL_LoadAudioFileData(const char* fileName, ALenum* format, ALvoi
 		}
 
 		IS.close();
-		IS.~InputStream();
+		IS.dispose();
 
 		if (!this->openAL_GetALFormat(outPropertyData, format)) {
 			this->app->Error("openAL: Error formatting");
@@ -304,7 +304,7 @@ bool Sound::openAL_LoadAudioFileData(const char* fileName, ALenum* format, ALvoi
 		*freq = (int)outPropertyData.mSampleRate;
 		return true;
 	}
-	IS.~InputStream();
+	IS.dispose();
 	return false;
 }
 

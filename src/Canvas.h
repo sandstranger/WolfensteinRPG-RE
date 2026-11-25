@@ -42,7 +42,7 @@ public:
 	static constexpr int SPD_LOOP = 7;
 	static constexpr int SPD_TOTAL = 8;
 	static constexpr int SPD_DEBUG = 9;
-	static constexpr int SPD_NUM_FIELDS = 10;
+	static constexpr int SPD_NUM_FIELDS = 13;	// (st_fields[10..12] are written too: it wrote past the array, over the Canvas)
 
 	static constexpr int MAX_EVENTS = 4;
 	static constexpr int MAX_STATE_VARS = 9;

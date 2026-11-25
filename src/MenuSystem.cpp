@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 
 #include "CAppContainer.h"
@@ -245,7 +246,7 @@ bool MenuSystem::startup() {
 		this->m_infoButtons->AddButton(btnGameMenuInfo);
 	}
 
-	IS.~InputStream();
+	IS.dispose();
 	return true;
 }
 
@@ -548,7 +549,7 @@ void MenuSystem::back() {
 	}
 
 	if (this->menu == Menus::MENU_MAIN_MORE_GAMES) {
-		this->background->~Image();
+		Image::dispose(this->background);
 		this->background = nullptr;
 	}
 
@@ -2058,7 +2059,7 @@ void MenuSystem::initMenu(int menu) {
 			this->selectedIndex = 0; // [GEC]
 
 			for (int weapon = 0; weapon < 17; ++weapon) {
-				if ((app->player->weapons & 1 << weapon) != 0x0) {
+				if ((app->player->weapons & bit32(weapon)) != 0x0) {
 					int n11 = (app->player->ce->weapon == Enums::WP_TESLA && weapon != Enums::WP_TESLA) ? Menus::ITEM_DISABLED : Menus::ITEM_NORMAL;
 					EntityDef* find5 = app->entityDefManager->find(Enums::ET_ITEM, Enums::IT_WEAPON, (uint8_t)weapon);
 					if (app->player->ce->weapon == weapon) {
@@ -3209,15 +3210,15 @@ void MenuSystem::startGame(bool b) {
 	Applet* app = CAppContainer::getInstance()->app;
 
 	if (this->background != this->imgMainBG) {
-		this->background->~Image();
+		Image::dispose(this->background);
 	}
 
-	this->imgMainBG->~Image();
+	Image::dispose(this->imgMainBG);
 
 	this->background = nullptr;
 	this->imgMainBG = nullptr;
 
-	this->imgLogo->~Image();
+	Image::dispose(this->imgLogo);
 	this->imgLogo = nullptr;
 
 	app->sound->soundStop();
@@ -3661,7 +3662,7 @@ void MenuSystem::showDetailsMenu() {
 	app->localization->composeText(Strings::FILE_ENTITYSTRINGS, this->detailsDef->description, this->detailsHelpText);
 	if (this->menu == Menus::MENU_ITEMS_SYRINGES) {
 		int n = menuItem->param - 5;
-		if (n >= 0 && (app->player->cocktailDiscoverMask & 1 << n) != 0x0) {
+		if (n >= 0 && (app->player->cocktailDiscoverMask & bit32(n)) != 0x0) {
 			Text* smallBuffer = app->localization->getSmallBuffer();
 			app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::DOUBLE_SPACED, smallBuffer);
 			app->localization->composeText(Strings::FILE_CODESTRINGS, CodeStrings::INGREDIENTS_TITLE, smallBuffer);
@@ -3897,7 +3898,7 @@ void MenuSystem::loadBookList() {
 	Text* largeBuffer = app->localization->getLargeBuffer();
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			if ((app->player->foundBooks[i] & 1 << j) != 0x0) {
+			if ((app->player->foundBooks[i] & bit32(j)) != 0x0) {
 				largeBuffer->setLength(0);
 				int n = i * 8 + j;
 				app->localization->composeText(Strings::FILE_BOOKSTRINGS, app->player->bookMap[n * 4], largeBuffer);
@@ -3979,7 +3980,7 @@ void MenuSystem::nextGamePage() {
 	if (this->moreGamesPage + 1 < 3) {
 		++this->moreGamesPage;
 
-		this->background->~Image();
+		Image::dispose(this->background);
 		this->background = nullptr;
 
 		app->beginImageLoading();
@@ -4021,7 +4022,7 @@ void MenuSystem::prevGamePage() {
 
 	if (this->moreGamesPage - 1 >= 0) {
 		--this->moreGamesPage;
-		this->background->~Image();
+		Image::dispose(this->background);
 		this->background = nullptr;
 
 		app->beginImageLoading();

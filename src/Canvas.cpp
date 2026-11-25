@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include "Bits.h"
 #include <cstring>
 #include <climits>
 #include <string>
@@ -1133,41 +1134,41 @@ void Canvas::setState(int state) {
 		this->cocktailName->dispose();
 		this->mixingInstructions->dispose();
 
-		this->imgMixingBG->~Image();
+		Image::dispose(this->imgMixingBG);
 		this->imgMixingBG = nullptr;
-		this->imgMixingHeadingPlate->~Image();
+		Image::dispose(this->imgMixingHeadingPlate);
 		this->imgMixingHeadingPlate = nullptr;
-		this->imgMixingTTRedNormal->~Image();
+		Image::dispose(this->imgMixingTTRedNormal);
 		this->imgMixingTTRedNormal = nullptr;
-		this->imgMixingTTRedSelected->~Image();
+		Image::dispose(this->imgMixingTTRedSelected);
 		this->imgMixingTTRedSelected = nullptr;
-		this->imgMixingTTRedEmpty->~Image();
+		Image::dispose(this->imgMixingTTRedEmpty);
 		this->imgMixingTTRedEmpty = nullptr;
-		this->imgMixingTTGreenNormal->~Image();
+		Image::dispose(this->imgMixingTTGreenNormal);
 		this->imgMixingTTGreenNormal = nullptr;
-		this->imgMixingTTGreenSelected->~Image();
+		Image::dispose(this->imgMixingTTGreenSelected);
 		this->imgMixingTTGreenSelected = nullptr;
-		this->imgMixingTTGreenEmpty->~Image();
+		Image::dispose(this->imgMixingTTGreenEmpty);
 		this->imgMixingTTGreenEmpty = nullptr;
-		this->imgMixingTTBludeNormal->~Image();
+		Image::dispose(this->imgMixingTTBludeNormal);
 		this->imgMixingTTBludeNormal = nullptr;
-		this->imgMixingTTBludeSelected->~Image();
+		Image::dispose(this->imgMixingTTBludeSelected);
 		this->imgMixingTTBludeSelected = nullptr;
-		this->imgMixingTTBludeEmpty->~Image();
+		Image::dispose(this->imgMixingTTBludeEmpty);
 		this->imgMixingTTBludeEmpty = nullptr;
-		this->imgMixingSyringe->~Image();
+		Image::dispose(this->imgMixingSyringe);
 		this->imgMixingSyringe = nullptr;
-		this->imgMixingSyringeSelected->~Image();
+		Image::dispose(this->imgMixingSyringeSelected);
 		this->imgMixingSyringeSelected = nullptr;
-		this->imgMixingSyringeRed->~Image();
+		Image::dispose(this->imgMixingSyringeRed);
 		this->imgMixingSyringeRed = nullptr;
-		this->imgMixingSyringeGreen->~Image();
+		Image::dispose(this->imgMixingSyringeGreen);
 		this->imgMixingSyringeGreen = nullptr;
-		this->imgMixingSyringeBlue->~Image();
+		Image::dispose(this->imgMixingSyringeBlue);
 		this->imgMixingSyringeBlue = nullptr;
-		this->imgMixingNumbersPlate->~Image();
+		Image::dispose(this->imgMixingNumbersPlate);
 		this->imgMixingNumbersPlate = nullptr;
-		this->imgMixingSyringeNumbersPlate->~Image();
+		Image::dispose(this->imgMixingSyringeNumbersPlate);
 		this->imgMixingSyringeNumbersPlate = nullptr;
 
 	}
@@ -1470,10 +1471,10 @@ void Canvas::checkFacingEntity() {
 	}
 	Entity* traceEntity2 = app->game->traceEntity;
 	int n4 = 4141;
-	if (traceEntity2 != nullptr && (1 << traceEntity2->def->eType & n4) == 0x0) {
+	if (traceEntity2 != nullptr && (bit32(traceEntity2->def->eType) & n4) == 0x0) {
 		for (int j = 1; j < app->game->numTraceEntities; ++j) {
 			Entity* entity2 = app->game->traceEntities[j];
-			if ((1 << entity2->def->eType & n4) != 0x0) {
+			if ((bit32(entity2->def->eType) & n4) != 0x0) {
 				traceEntity2 = entity2;
 				break;
 			}
@@ -1911,7 +1912,7 @@ void Canvas::loadEpilogueText() {
 }
 
 void Canvas::disposeIntro() {
-	this->imgTravelBG->~Image();
+	Image::dispose(this->imgTravelBG);
 	this->imgTravelBG = nullptr;
 	this->dialogBuffer->dispose();
 	this->dialogBuffer = nullptr;
@@ -1920,7 +1921,7 @@ void Canvas::disposeIntro() {
 
 void Canvas::disposeEpilogue() {
 	Applet* app = CAppContainer::getInstance()->app;
-	this->imgTravelBG->~Image();
+	Image::dispose(this->imgTravelBG);
 	this->imgTravelBG = nullptr;
 	this->dialogBuffer->dispose();
 	this->dialogBuffer = nullptr;
@@ -2337,7 +2338,7 @@ bool Canvas::handlePlayingEvents(int key, int action) {
 			}
 			else {
 				if (eType == Enums::ET_ATTACK_INTERACTIVE) {
-					if (!(1 << entity3->def->eSubType & Enums::INTERACT_SHOOT_OVER)) {
+					if (!(bit32(entity3->def->eSubType) & Enums::INTERACT_SHOOT_OVER)) {
 						entity = entity3;
 						n4 = n11;
 						break;
@@ -2404,7 +2405,7 @@ bool Canvas::handlePlayingEvents(int key, int action) {
 		}
 
 		int n12 = weapon2 * Combat::WEAPON_MAX_FIELDS;
-		if (entity != nullptr && entity->def->eType == Enums::ET_ATTACK_INTERACTIVE && !(1 << entity->def->eSubType & Enums::INTERACT_SHOOT_OVER) && app->combat->WorldDistToTileDist(dist2) > app->combat->weapons[n12 + Combat::WEAPON_FIELD_RANGEMAX]) {
+		if (entity != nullptr && entity->def->eType == Enums::ET_ATTACK_INTERACTIVE && !(bit32(entity->def->eSubType) & Enums::INTERACT_SHOOT_OVER) && app->combat->WorldDistToTileDist(dist2) > app->combat->weapons[n12 + Combat::WEAPON_FIELD_RANGEMAX]) {
 			entity = nullptr;
 		}
 
@@ -2806,8 +2807,8 @@ bool Canvas::handleEvent(int key) {
 			if ((keyAction == Enums::ACTION_FIRE && this->scrollingTextDone) || key == 18) {
 				this->endingGame = false;
 				app->sound->soundStop();
-				app->menuSystem->imgMainBG->~Image();
-				app->menuSystem->imgLogo->~Image();
+				Image::dispose(app->menuSystem->imgMainBG);
+				Image::dispose(app->menuSystem->imgLogo);
 				app->menuSystem->imgMainBG = app->loadImage(Resources::RES_LOGO_BMP_GZ, true);
 				app->menuSystem->imgLogo = app->loadImage(Resources::RES_LOGO2_BMP_GZ, true);
 				app->menuSystem->background = app->menuSystem->imgMainBG;
@@ -2881,7 +2882,7 @@ void Canvas::runInputEvents() {
 		if (this->numEvents <= 0) {
 			continue;
 		}
-		memcpy(this->events, this->events + 1, --this->numEvents * sizeof(int));
+		memmove(this->events, this->events + 1, --this->numEvents * sizeof(int));	// (they overlap: memcpy's undefined)
 	}
 
 	if (app->gameTime > this->blockInputTime) {
@@ -3696,7 +3697,7 @@ void Canvas::logoState() {
 	if (this->pacLogoIndex == -1 || app->upTimeMs - this->pacLogoTime > 2500) {
 		if (this->pacLogoIndex == 0) {
 			if (this->forceError) {
-				this->imgStartupLogo->~Image();
+				Image::dispose(this->imgStartupLogo);
 				this->imgStartupLogo = nullptr;
 
 				this->setState(Canvas::ST_ERROR);
@@ -4306,12 +4307,12 @@ void Canvas::backToMain(bool b) {
 	app->render->endFade();
 
     if (app->menuSystem->imgMainBG!= nullptr) {
-        app->menuSystem->imgMainBG->~Image();
+        Image::dispose(app->menuSystem->imgMainBG);
     }
 	app->menuSystem->imgMainBG = app->loadImage("logo.bmp", true);
 
     if (app->menuSystem->imgLogo!= nullptr) {
-        app->menuSystem->imgLogo->~Image();
+        Image::dispose(app->menuSystem->imgLogo);
     }
 	app->menuSystem->imgLogo = app->loadImage("logo2.bmp", true);
 
@@ -5380,7 +5381,7 @@ void Canvas::updateMixingText() {
 
 		for (int j = 0; j < app->resource->getNumTableBytes(12); ++j) {
 			if (b == this->cocktailRecipes[j]) {
-				if ((app->player->cocktailDiscoverMask & 1 << j) != 0x0) {
+				if ((app->player->cocktailDiscoverMask & bit32(j)) != 0x0) {
 					this->cocktailName->setLength(0);
 					app->localization->composeText(Strings::FILE_ENTITYSTRINGS, this->cocktailNames[j], this->cocktailName);
 					this->cocktailName->dehyphenate();
@@ -5431,7 +5432,7 @@ void Canvas::mixCocktail() {
 			}
 			}
 		}
-		app->player->cocktailDiscoverMask |= 1 << this->stateVars[5];
+		app->player->cocktailDiscoverMask |= bit32(this->stateVars[5]);
 		--app->player->inventory[Enums::INV_EMPTY_SYRINGE];
 		this->stateVars[0] = 0;
 		this->stateVars[3] = this->stateVars[2] = this->stateVars[1] = 0xFFB7B7B7;
@@ -5676,27 +5677,27 @@ void Canvas::endKickingGame() {
     }
 
     if (this->hKickingBar != nullptr) {
-        this->hKickingBar->~Image();
+        Image::dispose(this->hKickingBar);
     }
 	this->hKickingBar = nullptr;
     if (this->vKickingBar!= nullptr) {
-        this->vKickingBar->~Image();
+        Image::dispose(this->vKickingBar);
     }
 	this->vKickingBar = nullptr;
     if (this->imgChickenKicking_ScoreBG!= nullptr) {
-        this->imgChickenKicking_ScoreBG->~Image();
+        Image::dispose(this->imgChickenKicking_ScoreBG);
     }
 	this->imgChickenKicking_ScoreBG = nullptr;
     if (this->imgChickenKicking_05Highlight!= nullptr) {
-        this->imgChickenKicking_05Highlight->~Image();
+        Image::dispose(this->imgChickenKicking_05Highlight);
     }
 	this->imgChickenKicking_05Highlight = nullptr;
     if (this->imgChickenKicking_20Highlight!= nullptr) {
-        this->imgChickenKicking_20Highlight->~Image();
+        Image::dispose(this->imgChickenKicking_20Highlight);
     }
 	this->imgChickenKicking_20Highlight = nullptr;
     if (this->imgChickenKicking_30Highlight!= nullptr) {
-        this->imgChickenKicking_30Highlight->~Image();
+        Image::dispose(this->imgChickenKicking_30Highlight);
     }
 	this->imgChickenKicking_30Highlight = nullptr;
 
@@ -6155,19 +6156,19 @@ void Canvas::initTravelMap() {
 }
 
 void Canvas::disposeTravelMap() {
-	this->imgTMArrow->~Image();
+	Image::dispose(this->imgTMArrow);
 	this->imgTMArrow = nullptr;
-	this->imgTravelBG->~Image();
+	Image::dispose(this->imgTravelBG);
 	this->imgTravelBG = nullptr;
-	this->imgMagGlass->~Image();
+	Image::dispose(this->imgMagGlass);
 	this->imgMagGlass = nullptr;
-	this->imgMagBG->~Image();
+	Image::dispose(this->imgMagBG);
 	this->imgMagBG = nullptr;
-	this->imgTMLevels->~Image();
+	Image::dispose(this->imgTMLevels);
 	this->imgTMLevels = nullptr;
-	this->imgTMHighlight->~Image();
+	Image::dispose(this->imgTMHighlight);
 	this->imgTMHighlight = nullptr;
-	this->imgFlak->~Image();
+	Image::dispose(this->imgFlak);
 	this->imgFlak = nullptr;
 }
 
@@ -6373,21 +6374,21 @@ void Canvas::exitIntroMovie(bool b) {
 
 	app->game->cleanUpCamMemory();
 
-	this->imgProlog->~Image();
+	Image::dispose(this->imgProlog);
 	this->imgProlog = nullptr;
-	this->imgProlog_0_1->~Image();
+	Image::dispose(this->imgProlog_0_1);
 	this->imgProlog_0_1 = nullptr;
-	this->imgProlog_1_0->~Image();
+	Image::dispose(this->imgProlog_1_0);
 	this->imgProlog_1_0 = nullptr;
-	this->imgProlog_1_1->~Image();
+	Image::dispose(this->imgProlog_1_1);
 	this->imgProlog_1_1 = nullptr;
-	this->imgProlog_2_0->~Image();
+	Image::dispose(this->imgProlog_2_0);
 	this->imgProlog_2_0 = nullptr;
-	this->imgProlog_2_1->~Image();
+	Image::dispose(this->imgProlog_2_1);
 	this->imgProlog_2_1 = nullptr;
-	this->imgFire->~Image();
+	Image::dispose(this->imgFire);
 	this->imgFire = nullptr;
-	this->imgFlak->~Image();
+	Image::dispose(this->imgFlak);
 	this->imgFlak = nullptr;
 
 	if (this->dialogBuffer) {

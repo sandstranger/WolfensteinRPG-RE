@@ -15,6 +15,13 @@ if(MSVC)
 	add_definitions("/D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+if(NOT MSVC)
+	# the code is decompiled Java: its signed arithmetic wraps, as Java's does, it type-puns, and it takes char as
+	# signed: none of which the optimiser may assume otherwise (miscompiles and crashes with -Os/LTO, on arm
+	# especially, where char is unsigned)
+	add_compile_options(-fwrapv -fno-strict-aliasing -fsigned-char)
+endif()
+
 if (NOT ANDROID)
 	find_package(SDL2 REQUIRED)
 	find_package(ZLIB REQUIRED)

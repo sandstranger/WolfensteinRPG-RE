@@ -185,16 +185,14 @@ void ZipFile::openZipFile(const char* name) {
 }
 
 void ZipFile::closeZipFile() {
-	if (this) {
-		if (this->entry) {
-			free(this->entry);
-			this->entry = nullptr;
-		}
+	if (this->entry) {
+		free(this->entry);
+		this->entry = nullptr;
+	}
 
-		if (this->file) {
-			fclose(this->file);
-			this->file = nullptr;
-		}
+	if (this->file) {
+		fclose(this->file);
+		this->file = nullptr;
 	}
 }
 

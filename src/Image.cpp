@@ -10,16 +10,22 @@ Image::Image() {
 }
 
 Image::~Image() {
-    if (this) {
-        if (this->piDIB) {
-            this->piDIB->~IDIB();
-            free(this->piDIB);
-        }
-        this->piDIB = nullptr;
-        glDeleteTextures(1, &this->texture);
-        this->texture = -1;
-        free(this);
-    }
+	// (Images are malloc'd, and go through Image::dispose: they were "deleted" by calling this on them, which then
+	// freed its own object, and checked if (this) for null ones: a check optimisation removes, so a null image's
+	// dispose crashed in release builds)
+}
+
+void Image::dispose(Image* img) {
+	if (!img) {
+		return;
+	}
+	if (img->piDIB) {
+		IDIB::dispose(img->piDIB);
+		img->piDIB = nullptr;
+	}
+	glDeleteTextures(1, &img->texture);
+	img->texture = -1;
+	std::free(img);
 }
 
 void Image::CreateTexture(uint16_t* data, uint32_t width, uint32_t height) {
