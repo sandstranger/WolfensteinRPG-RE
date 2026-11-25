@@ -77,7 +77,8 @@ float   gCurMouseY;
 
 #if ANDROID
 typedef void (*forceLandScapeActivityOrientationDelegate)();
-static forceLandScapeActivityOrientationDelegate activityOrientationChangerInstance = nullptr;
+#include <atomic>
+static std::atomic<forceLandScapeActivityOrientationDelegate> activityOrientationChangerInstance(nullptr);	// (set on the java side's thread)
 #endif
 
 keyMapping_t keyMapping[KEY_MAPPIN_MAX];
@@ -712,8 +713,9 @@ Input::~Input() {
 // Port: set default Binds
 void Input::init() {
 #ifdef ANDROID
-    extern std::string g_pathToSDLControllerDB;
-    const auto *pathToSdl2ControllerDb = g_pathToSDLControllerDB.c_str();
+    extern std::string sdlControllerDBPath();
+    const std::string pathToSdl2ControllerDbStr = sdlControllerDBPath();   // (set on the java side's thread: a copy)
+    const auto *pathToSdl2ControllerDb = pathToSdl2ControllerDbStr.c_str();
 
     if (SDL_GameControllerAddMappingsFromFile(pathToSdl2ControllerDb) < 0) {
         SDL_Log("Couldn't load mappings: %s\n", SDL_GetError());
@@ -811,8 +813,10 @@ void Input::handleEvents() noexcept {
 
     while (SDL_PollEvent(&sdlEvent) != 0) {
 #if ANDROID
-        if (sdlEvent.type == SDL_APP_DIDENTERFOREGROUND && activityOrientationChangerInstance!= nullptr){
-            activityOrientationChangerInstance();
+        if (sdlEvent.type == SDL_APP_DIDENTERFOREGROUND){
+            if (const forceLandScapeActivityOrientationDelegate callback = activityOrientationChangerInstance.load()) {
+                callback();
+            }
         }
 #endif
         switch (sdlEvent.type) {

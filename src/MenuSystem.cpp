@@ -3147,7 +3147,8 @@ void MenuSystem::select(int i) {
 }
 
 void MenuSystem::infiniteLoop() {
-	for (int i = 1024; ; i += 4) {
+	// (volatile: a loop without side effects that never ends is undefined behaviour in C++, may be assumed to end)
+	for (volatile int i = 1024; ; i += 4) {
 		i = 0;
 	}
 }

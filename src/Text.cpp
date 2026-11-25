@@ -1,3 +1,4 @@
+#include <atomic>
 #include <stdexcept>
 #include "Bits.h"
 #include <cstring>
@@ -23,18 +24,18 @@
 // --------------------
 constexpr char* Localization::STRINGS_MENUS[4][49];
 
-static bool g_enableSDLTTF = false;	// (read on every platform, set from android's side)
-static bool g_enableMachineTranslation = false;
+static std::atomic<bool> g_enableSDLTTF(false);	// (read on every platform, set from android's side: on the java side's thread)
+static std::atomic<bool> g_enableMachineTranslation(false);
 
 #if ANDROID
 extern "C"{
 __attribute__((used)) __attribute__((visibility("default")))
-void setEnableSDLTTFState (const bool enableSDLTTF){
-    g_enableSDLTTF = enableSDLTTF;
+void setEnableSDLTTFState (const int enableSDLTTF){   // (an int: JNA passes a java 'boolean' as a 32 bit int)
+    g_enableSDLTTF = (enableSDLTTF != 0);
 }
 __attribute__((used)) __attribute__((visibility("default")))
-void setEnableMachineTranslationState (const bool enableMachineTranslation){
-    g_enableMachineTranslation = enableMachineTranslation;
+void setEnableMachineTranslationState (const int enableMachineTranslation){
+    g_enableMachineTranslation = (enableMachineTranslation != 0);
 }
 }
 #endif

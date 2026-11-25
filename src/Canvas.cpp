@@ -192,8 +192,8 @@ bool Canvas::startup() {
 		this->startupMap = 1;
 		this->skipIntro = false;
 		this->tellAFriend = false;
-        extern std::string g_pathToUserFolder;
-        std::string pathToTTFFont = g_pathToUserFolder + std::string("/UnifontExMono.ttf");
+        extern std::string userFolderPath();
+        std::string pathToTTFFont = userFolderPath() + std::string("/UnifontExMono.ttf");
 
         auto smallTTFFont = TTF_OpenFont(pathToTTFFont.c_str(), 16);
 
@@ -3877,7 +3877,7 @@ void Canvas::drawAutomap(Graphics* graphics, bool b) {
 												b5 = true;
 											}
 											else if ((n16 & 0x400000) != 0x0) {
-												color = 0xFFF746C59;
+												color = 0xFF746C59;	// (was 0xFFF746C59, 36 bits: converted to int, these are its low 32)
 												b5 = true;
 											}
 											else if (nextOnTile->def->eType == Enums::ET_NONOBSTRUCTING_SPRITEWALL) {
@@ -5706,7 +5706,8 @@ void Canvas::endKickingGame() {
 }
 
 int Canvas::getKickPoint(int n, int n2) {
-	n = (--n & ~(n >> 31));
+	--n;	// ('n = (--n & ~(n >> 31))': n modified and read unsequenced, undefined behaviour)
+	n &= ~(n >> 31);
 	n2 -= 18;
 	n2 &= ~(n2 >> 31);
 	return Canvas::CKPOINTS[n + n2 * 5];

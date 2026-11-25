@@ -29,11 +29,45 @@
 using namespace std;
 #endif
 
+#include <atomic>
+#include <mutex>
+#include <string>
+
 #if ANDROID
-static string g_pathToIPA;
-string g_pathToUserFolder;
-string g_pathToSDLControllerDB;
+// The paths the launcher gives through JNA (setPathsToResources, setPathToSDLControllerDB): set on the java side's thread and
+// read on the game's, so guarded by a mutex and read through the functions below (copies)
+static std::mutex g_jnaPathsMutex;
+static std::string g_pathToIPA;
+static std::string g_pathToUserFolder;
+static std::string g_pathToSDLControllerDB;
+
+static std::string jnaPath(const std::string &path) {
+    std::lock_guard<std::mutex> lock(g_jnaPathsMutex);
+    return path;
+}
+
+static void setJnaPath(std::string &path, const char *value) {
+    std::lock_guard<std::mutex> lock(g_jnaPathsMutex);
+    path = (value) ? value : "";    // (JNA passes null for a null String: a std::string of null is undefined)
+}
+
+std::string sdlControllerDBPath() {
+    return jnaPath(g_pathToSDLControllerDB);
+}
+
+// needToShowScreenControls() for the java side, worked out on the game's thread every frame (drawView): the java side's
+// thread read the canvas itself, while the game changed it (or destroyed it, at exit)
+static std::atomic<int> g_javaShowScreenControls(1);
 #endif
+
+//! The folder of the user's files (the font): the launcher's on android, the working directory elsewhere
+std::string userFolderPath() {
+#if ANDROID
+    return jnaPath(g_pathToUserFolder);
+#else
+    return ".";
+#endif
+}
 
 void drawView(SDLGL* sdlGL);
 
@@ -44,7 +78,7 @@ int main(int argc, char* args[]) {
 #endif
 
 #ifdef ANDROID
-    chdir(g_pathToUserFolder.c_str());
+    chdir(jnaPath(g_pathToUserFolder).c_str());
 #endif
     int		UpTime = 0;
 
@@ -54,7 +88,7 @@ int main(int argc, char* args[]) {
     
     ZipFile zipFile;
 #ifdef ANDROID
-    zipFile.openZipFile(g_pathToIPA.c_str());
+    zipFile.openZipFile(jnaPath(g_pathToIPA).c_str());
 #else
     zipFile.openZipFile("Wolfenstein RPG.ipa");
 #endif
@@ -148,6 +182,14 @@ void drawView(SDLGL *sdlGL) {
 
     CAppContainer::getInstance()->DoLoop(passedTime);
 #ifdef ANDROID
+    {
+        // (for needToShowScreenControls(), see g_javaShowScreenControls)
+        const Canvas *canvas = CAppContainer::getInstance()->app ? CAppContainer::getInstance()->app->canvas : nullptr;
+        const int state = canvas ? canvas->state : -1;
+        g_javaShowScreenControls = (!canvas || state == Canvas::ST_PLAYING || state == Canvas::ST_COMBAT) ? 1 : 0;
+    }
+#endif
+#ifdef ANDROID
     if (SwappySwapBuffers()){
         return;
     }
@@ -163,34 +205,31 @@ void onNativeResume() {
 __attribute__((used)) __attribute__((visibility("default")))
  void onNativePause() {
 }
+// The queries return an int: JNA reads a java 'boolean' result as a 32 bit int, and of a returned C/C++ 'bool' only the
+// low byte is defined on arm64 (AAPCS64 leaves the rest of the register unspecified).
 __attribute__((used)) __attribute__((visibility("default")))
-bool needToShowScreenControls() {
-    CAppContainer *appContainer = CAppContainer::getInstance();
-    if (!appContainer || !appContainer->app || !appContainer->app->canvas){
-        return true;
-    }
-    int currentCanvasState = appContainer->app->canvas->state;
-    return currentCanvasState ==Canvas::ST_PLAYING || currentCanvasState ==Canvas::ST_COMBAT;
+int needToShowScreenControls() {
+    return g_javaShowScreenControls;
 }
 
 __attribute__((used)) __attribute__((visibility("default")))
-bool needToInvokeMouseButtonsEvents(){
-    return true;
+int needToInvokeMouseButtonsEvents(){
+    return 1;
 }
 
 __attribute__((used)) __attribute__((visibility("default")))
-bool needToReInitGameControllers (){
-    return false;
+int needToReInitGameControllers (){
+    return 0;
 }
 __attribute__((used)) __attribute__((visibility("default")))
 void setPathsToResources (const char *pathToArchive, const char *pathToUserFolder) {
-    g_pathToUserFolder =pathToUserFolder;
-    g_pathToIPA = pathToArchive;
+    setJnaPath(g_pathToUserFolder, pathToUserFolder);
+    setJnaPath(g_pathToIPA, pathToArchive);
 }
 
 __attribute__((used)) __attribute__((visibility("default")))
 void setPathToSDLControllerDB (const char *pathToSDLControllerDB){
-    g_pathToSDLControllerDB = pathToSDLControllerDB;
+    setJnaPath(g_pathToSDLControllerDB, pathToSDLControllerDB);
 }
 }
 #endif
